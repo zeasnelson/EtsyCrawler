@@ -1,0 +1,14 @@
+dogs
+mars
+
+
+Black
+Blue
+Gray
+Green
+Orange
+Pink
+Red
+White
+Yellow
+
