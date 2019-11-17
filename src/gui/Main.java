@@ -3,6 +3,7 @@ import core.*;
 import manager.UserSession;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -28,6 +29,9 @@ public class Main {
     private JTextField passwordField;
     private JTextField signUpPassField;
     private JTextField signUpUserNameField;
+    private JTextField minPrice;
+    private JTextField maxPrice;
+    private JTextField accNewPassField;
     
     //Search filters components
     private JComboBox category ;
@@ -38,18 +42,18 @@ public class Main {
     private JCheckBox customizable ;
     private JCheckBox giftWrap     ;
     private JCheckBox giftCards    ;
+    private JComboBox sort;
+    private JComboBox deleteList;
+
     private JButton   reset;
-    private JTextField minPrice;
-    private JTextField maxPrice;
 
 
     private JLabel usrNameLabel;
     private JLabel accountMsgLabel;
     private JLabel msgField;
     private JLabel resLabel;
-    private JLabel errorLabel;
+    private JLabel signInErrorLabel;
 
-    private JComboBox deleteList;
 
     private JPanel  mainPanel;
     private JPanel singInPanel;
@@ -72,7 +76,6 @@ public class Main {
 
     private void renderMainFrame(){
         msgField = new JLabel(" ");
-        etsyUrlFormatter = new EtsyUrlFormatter();
         mainFrame.setTitle("Etsy Crawler");
         mainFrame.setDefaultCloseOperation(mainFrame.EXIT_ON_CLOSE);
         mainFrame.setLayout(new BorderLayout());
@@ -105,7 +108,7 @@ public class Main {
 
     private void createSignInPanel(){
         singInPanel              = new JPanel();
-        errorLabel               = new JLabel();
+        signInErrorLabel         = new JLabel();
         usernameField            = new JTextField(15);
         passwordField            = new JPasswordField(10);
         JLabel signIn            = new JLabel("Sign In");
@@ -137,7 +140,7 @@ public class Main {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.ipadx = 4;
         constraints.ipady = 4;
-
+        constraints.insets = constraints.insets = new Insets(0,10,0,0);
         //Sign in section
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -146,9 +149,9 @@ public class Main {
 
         constraints.gridx = 1;
         constraints.gridy = 0;
-        singInPanel.add(errorLabel, constraints);
-        errorLabel.setBorder( new EmptyBorder(20,0,20,0));
-        errorLabel.setForeground(Color.RED);
+        singInPanel.add(signInErrorLabel, constraints);
+        signInErrorLabel.setBorder( new EmptyBorder(20,0,20,0));
+        signInErrorLabel.setForeground(Color.RED);
 
         constraints.gridx = 0;
         constraints.gridy = 1;
@@ -162,10 +165,13 @@ public class Main {
         constraints.gridy = 2;
         singInPanel.add(passwordLabel, constraints);
 
+
         constraints.gridx = 1;
         constraints.gridy = 2;
         singInPanel.add(passwordField, constraints);
 
+        constraints.insets.bottom = 10;
+        constraints.insets.top = 5;
         constraints.gridx = 0;
         constraints.gridy = 4;
         singInPanel.add(signInBtn, constraints);
@@ -179,7 +185,8 @@ public class Main {
         singInPanel.add(signInAsAdmin, constraints);
 
         //Sign up section
-
+        constraints.insets.bottom = 0;
+        constraints.insets.top = 0;
         constraints.gridx = 0;
         constraints.gridy = 6;
         singInPanel.add(signUpLabel, constraints);
@@ -213,6 +220,7 @@ public class Main {
         singInPanel.add(passRuleLabel, constraints);
         passRuleLabel.setBorder( new EmptyBorder(0,20,10,0));
 
+        constraints.insets.top = 5;
         constraints.gridx = 0;
         constraints.gridy = 10;
         singInPanel.add(signUpBtn, constraints);
@@ -249,8 +257,8 @@ public class Main {
         reset        = new JButton("reset filters");
         minPrice     = new JTextField("enter min price");
         maxPrice     = new JTextField("enter max price");
-        TitledBorder border = new TitledBorder("Search Filters");
-
+        Border blackLine = BorderFactory.createLineBorder(Color.black);
+        TitledBorder border = new TitledBorder(blackLine, "Search Filters");
         border.setTitleColor(Color.blue);
 
         searchFilters.setLayout(new GridBagLayout());
@@ -366,6 +374,7 @@ public class Main {
         c.gridx = 4;
         searchFilters.add(maxPrice, c);
 
+
         searchFilters.setBorder( border);
 
         return searchFilters;
@@ -422,7 +431,7 @@ public class Main {
         JButton sendEmail   = new JButton("send");
         emailField          = new JTextField("Enter email");
         JButton viewEmailReport = new JButton("Review email report");
-        JComboBox sort      = new JComboBox();
+        sort                = new JComboBox();
         JSeparator separator = new JSeparator(JSeparator.VERTICAL);
 
 
@@ -435,13 +444,14 @@ public class Main {
         centerPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.CENTER;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(15,10,0,10);
         c.gridy = 0;
         c.gridx = 0;
         deleteList.addItem("View History");
         deleteList.addItem("All searches");
         centerPanel.add(deleteList, c);
 
+        c.insets.right = 50;
         c.gridy = 0;
         c.gridx = 1;
         sort.addItem("Sort by");
@@ -451,18 +461,13 @@ public class Main {
         sort.addItem("by date: DESC");
         centerPanel.add(sort, c);
 
+        c.insets.right = 10;
         c.gridy = 0;
         c.gridx = 2;
-        separator.setPreferredSize(new Dimension(50,20));
-        separator.setMinimumSize(separator.getPreferredSize());
-        centerPanel.add(separator, c);
-
-        c.gridy = 0;
-        c.gridx = 3;
         centerPanel.add(viewEmailReport, c);
 
         c.gridy = 0;
-        c.gridx = 4;
+        c.gridx = 3;
         emailField.setPreferredSize(new Dimension(200, 30));
         emailField.setMaximumSize(emailField.getPreferredSize());
         emailField.setMinimumSize(emailField.getPreferredSize());
@@ -470,7 +475,7 @@ public class Main {
         centerPanel.add(emailField, c);
 
         c.gridy = 0;
-        c.gridx = 5;
+        c.gridx = 4;
         centerPanel.add(sendEmail, c);
 
         //        emailField.addFocusListener(new FocusListener() {
@@ -508,7 +513,6 @@ public class Main {
         resultsTable.getSelectionModel().addListSelectionListener(e -> {
             if( !e.getValueIsAdjusting() ){
                 if (resultsTable.getSelectedRow() > -1) {
-                    //System.out.println(resultsTable.getValueAt(resultsTable.getSelectedRow(), 0).toString());
                     currentRow = resultsTable.getSelectedRow();
                     showItemPicture(resultsTable.getSelectedRow());
                 }
@@ -573,9 +577,10 @@ public class Main {
         imgPanel.setBorder( new EmptyBorder(20,20,20,20));
         imgPanel.setPreferredSize(new Dimension(340, 280));
 
-        JLabel etsyLabel = new JLabel("        ");//just to created the padding on the left of table
-//        msgField = new JLabel(" ");
+        //just to created the padding on the left of table
+        JLabel etsyLabel = new JLabel("        ");
         msgField.setBorder(new EmptyBorder(20, 40, 20, 40));
+        msgField.setForeground(Color.BLUE);
 
         JLabel separator = new JLabel("  ");//only used to separate a component
         lowerPanel.add(separator, BorderLayout.NORTH);
@@ -595,12 +600,12 @@ public class Main {
         accUsrNmF           = new JTextField();
         JLabel changePassL  = new JLabel("Change password");
         JLabel newPassL     = new JLabel("Enter new password");
-        JTextField newPassF = new JTextField();
+        accNewPassField     = new JTextField();
         JButton changePassB = new JButton("Change password");
         JLabel passRule     = new JLabel("Only letters or numbers, no spaces or symbols");
 
         signOutBtn.addActionListener( e -> logOutUser() );
-        changePassB.addActionListener( e -> changeUserPassword(newPassF));
+        changePassB.addActionListener( e -> changeUserPassword(accNewPassField));
         backToResB.addActionListener( e -> switchToResults() );
 
         accountPanel.setLayout(new GridBagLayout());
@@ -655,8 +660,8 @@ public class Main {
 
         c.gridy = 5;
         c.gridx = 1;
-        newPassF.setPreferredSize(new Dimension(150, 15));
-        accountPanel.add(newPassF, c);
+        accNewPassField.setPreferredSize(new Dimension(150, 15));
+        accountPanel.add(accNewPassField, c);
 
         c.gridy = 5;
         c.gridx = 2;
@@ -689,8 +694,6 @@ public class Main {
     }
 
     private void resetSearchFilters(){
-        //reset the EtsyFormatter object as well
-        etsyUrlFormatter = new EtsyUrlFormatter();
 
         //reset components
         category.setSelectedIndex(0);
@@ -701,6 +704,11 @@ public class Main {
         customizable.setSelected(false);
         giftWrap.setSelected(false);
         giftCards.setSelected(false);
+        minPrice.setText("enter min price");
+        maxPrice.setText("enter max price");
+
+        //reset the EtsyFormatter object as well
+        etsyUrlFormatter = new EtsyUrlFormatter();
     }
 
     private void changeUserPassword(JTextField text){
@@ -750,6 +758,7 @@ public class Main {
         User guest = new User("1", "guest", "guest");
         this.currentSession = new UserSession(guest);
         this.currentSession.setIsGuestUser(true);
+        this.etsyUrlFormatter = new EtsyUrlFormatter();
         switchToResults();
     }
 
@@ -761,7 +770,7 @@ public class Main {
 
         if( userNm && pass ){
             if( DBDriver.userExists(signUpUserNameField.getText().trim()) ){
-                msgField.setText("User name already taken");
+                signInErrorLabel.setText("User name already taken");
             }
             else{
                 Boolean wasAdded = DBDriver.addNewUser(userName, password);
@@ -771,48 +780,45 @@ public class Main {
                     switchToResults();
                 }
                 else{
-                    msgField.setText("Invalid username or password");
+                    signInErrorLabel.setText("Error, try again");
                 }
             }
         }
         else {
-            if( !pass && !userNm  ){
-                msgField.setText("Invalid password and username");
+            if( !pass ){
+                signInErrorLabel.setText("Invalid password!");
             }
-            else if( !pass ){
-                msgField.setText("Invalid password!");
-            }
-            else
-                msgField.setText("Invalid username!");
+            else if( !userNm )
+                signInErrorLabel.setText("Invalid username!");
         }
     }
 
     private void signIn(){
-//        switchToResults();
-//        return;
+
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
         User user = DBDriver.userExists(username, password);
         if( username.isEmpty() || password.isEmpty() ){
-            errorLabel.setText("Enter a username");
+            signInErrorLabel.setText("Enter a username");
         }
         else if ( user != null ){
             setUpUser(user);
             switchToResults();
         }
         else{
-            errorLabel.setText("Invalid username or password");
+            signInErrorLabel.setText("Invalid username or password");
         }
     }
 
     private void setUpUser(User user){
-        currentSession = new UserSession(user);
-        currentSession.loadHistory();
-        resImage = new ImageIcon("appdata/images/tempImg.png");
-        resLabel.setIcon(resImage);
+        this.etsyUrlFormatter = new EtsyUrlFormatter();
+        this.currentSession = new UserSession(user);
+        this.currentSession.loadHistory();
+        this.resImage = new ImageIcon("appdata/images/tempImg.png");
+        this.resLabel.setIcon(resImage);
         this.accUsrNmF.setText(user.getUserName());
         DefaultComboBoxModel model = (DefaultComboBoxModel)deleteList.getModel();
-        model.addAll(currentSession.getSearchHistory());
+        model.addAll(currentSession.getSearchHistory().keySet());
     }
 
     private void deleteResult(){
@@ -907,18 +913,30 @@ public class Main {
         if( !this.currentSession.isGuestUser()){
             currentSession.storeUserActivity();
         }
-
-        currentSession = null;
+        passwordField.setText("");
+        signUpPassField.setText("");
+        signUpUserNameField.setText("");
+        searchField.setText("Search on Etsy.com");
+        accNewPassField.setText("");
         tableModel.setRowCount(0);
         searchField.setText("");
         msgField.setText("");
+        emailField.setText("Enter Email");
+        currentSession = null;
+        resImage = new ImageIcon("appdata/images/tempImg.png");
+        resLabel.setIcon(resImage);
+        resetSearchFilters();
         DefaultComboBoxModel model = (DefaultComboBoxModel) deleteList.getModel();
         model.removeAllElements();
+
+        model.addElement("View History:");
+        model.addElement("All searches");
+        deleteList.setSelectedIndex(0);
         switchToSignInPanel();
+        currentSession = null;
     }
 
     private void getData(JTextField searchQuery){
-        msgField.setText("Downloading html from Etsy.com");
         String searchRaw = searchQuery.getText().trim();
 
         //dont search if nothing was entered in search box
@@ -927,12 +945,12 @@ public class Main {
         }
 
         //Set the min/max price and search query
-        String search = searchRaw.replaceAll(" ", "%20");
         this.etsyUrlFormatter.setPriceMin(getMinPrice());
         this.etsyUrlFormatter.setPriceMax(getMaxPrice());
-        this.etsyUrlFormatter.setSearchQuery(search);
+        this.etsyUrlFormatter.setSearchQuery(searchRaw);
 
-        ArrayList<Item> results = currentSession.search(etsyUrlFormatter);
+        String search = this.etsyUrlFormatter.getSearchQuery();
+        ArrayList<Item> results = currentSession.search(search, this.etsyUrlFormatter.getFormatedUrl());
         if( results != null ){
             loadTableRows(results);
             msgField.setText(results.size() + " items downloaded");
@@ -942,7 +960,7 @@ public class Main {
             }
         }
         else{
-            msgField.setText("Error downloading, Etsy blocked us or connection too slow. Try again!");
+            msgField.setText("Error downloading, try removing search filters or Etsy blocked just us");
         }
     }
 
@@ -1065,16 +1083,19 @@ public class Main {
         }
     }
 
+
+    //main
     public static void main(String[] args) {
         new Main();
 
-    }
+    }//main
+
+
+
 
     /**
      * Private action listeners for different components
      */
-
-
     private class SearchFieldFocusListener implements FocusListener{
         @Override
         public void focusGained(FocusEvent e) {
@@ -1107,7 +1128,7 @@ public class Main {
         public void itemStateChanged(ItemEvent event) {
             if (event.getStateChange() == ItemEvent.SELECTED) {
                 Object search = event.getItem();
-                if( search.toString().equals("View History")){
+                if( search.toString().equals("View History") || currentSession == null){
                     return;
                 }
                 else if( event.getItem().equals("All searches")){
@@ -1120,10 +1141,10 @@ public class Main {
                         msgField.setText("Could no load all searches");
                     }
                 }
-                else {
-                    EtsyUrlFormatter url = new EtsyUrlFormatter();
-                    url.setSearchQuery(search.toString());
-                    ArrayList<Item> results = currentSession.search(url);
+                else if( !search.toString().trim().isEmpty()) {
+                    ArrayList<Item> results;
+                    results = currentSession.search(search.toString(), currentSession.getSearchHistory().get(search.toString()));
+
                     if (results != null) {
                         loadTableRows(results);
                         msgField.setText(results.size() + " items");
@@ -1140,31 +1161,23 @@ public class Main {
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 Object item = e.getItem();
-
-                Boolean sorted = true;
-                switch (e.getItem().toString()){
+                switch (item.toString()){
                     case "by price: ASC":
+                        msgField.setText("Items sorted by price in ascending order");
                         sortByPrice("ASC");
                         break;
                     case "by price: DESC":
+                        msgField.setText("Items sorted by price in descending order");
                         sortByPrice("DESC");
                         break;
                     case "by date: ASC":
+                        msgField.setText("Items sorted by created date in ascending order");
                         sortByDateASC();
                         break;
                     case "by date: DESC":
+                        msgField.setText("Items sorted by created date in descending order");
                         sortByDateDESC();
                         break;
-                    case "Sort by":
-                        break;
-                    default:
-                        sorted = false;
-                }
-                if( sorted ){
-                    msgField.setText("Items sorted by created date");
-                }
-                else{
-                    msgField.setText("Error! Items could not be sorted");
                 }
             }
         }
@@ -1180,7 +1193,7 @@ public class Main {
                         etsyUrlFormatter.setCategory("");
                     }
                     else if( !item.toString().equals("CATEGORY")) {
-                        etsyUrlFormatter.setCategory(item.toString());
+                        etsyUrlFormatter.setCategory("/"+item.toString());
                     }
                 }
             }
