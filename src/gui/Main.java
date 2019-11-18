@@ -44,8 +44,7 @@ public class Main {
     private JCheckBox giftCards    ;
     private JComboBox sort;
     private JComboBox deleteList;
-
-    private JButton   reset;
+    private JComboBox usersList;
 
 
     private JLabel usrNameLabel;
@@ -53,6 +52,7 @@ public class Main {
     private JLabel msgField;
     private JLabel resLabel;
     private JLabel signInErrorLabel;
+    private JLabel adminCurrentUserLbl;
 
 
     private JPanel  mainPanel;
@@ -60,9 +60,17 @@ public class Main {
     private JPanel resultsPanel;
     private JPanel accountPanel;
     private JPanel searchFilters;
+    private JPanel adminPanel;
 
-    private DefaultTableModel tableModel;
+    private DefaultTableModel resultsTblModel;
+    private DefaultTableModel adminTblModel;
+    private DefaultTableModel adminUsersListModel;
+
     private ImageIcon resImage;
+
+    private JButton reset;
+
+
 
     private int currentRow;
     private UserSession currentSession;
@@ -88,20 +96,21 @@ public class Main {
     }
 
     private void renderMainPanel(){
-
         mainPanel = new JPanel();
         card      = new CardLayout();
 
         createSignInPanel();
         createResultsPanel();
         createAccountPanel();
+        createAdminPanel();
 
         mainPanel.setLayout(card);
         mainPanel.add("signInPanel", singInPanel);
         mainPanel.add("resultsPanel", resultsPanel);
         mainPanel.add("accountPanel", accountPanel);
+        mainPanel.add("adminPanel", adminPanel);
 
-        card.show(mainPanel, "signInPanel");
+        card.show(mainPanel, "adminPanel");
 
         mainFrame.add(mainPanel);
     }
@@ -241,6 +250,103 @@ public class Main {
         resultsPanel.add(topPanel, BorderLayout.NORTH);
         resultsPanel.add(centerPanel, BorderLayout.CENTER);
         resultsPanel.add(lowerPanel, BorderLayout.SOUTH);
+    }
+
+    private void createAdminPanel(){
+
+        adminPanel        = new JPanel();
+
+        adminCurrentUserLbl = new JLabel("");
+
+        JPanel optsPanel       = createAdminButtons();
+        JPanel adminUsersPanel = createUsersListPanel();
+        JPanel adminResTable   = createAdminUsersTable();
+
+        adminPanel.setLayout(new BorderLayout());
+        adminPanel.add(adminUsersPanel, BorderLayout.WEST);
+        adminPanel.add(adminResTable, BorderLayout.CENTER);
+        adminPanel.add(optsPanel, BorderLayout.EAST);
+    }
+
+    private JPanel createAdminButtons(){
+        JPanel optsPanel                  = new JPanel();
+        JButton adminViewUserData         = new JButton("View " + adminCurrentUserLbl.getText() + " data");
+        JButton adminViewUserSearches     = new JButton("View "+ adminCurrentUserLbl.getText() +" searches");
+        JButton adminRestoreEntireHistory = new JButton("Restore "+ adminCurrentUserLbl.getText() + " history");
+        JButton adminDeleteCurrentUser    = new JButton("delete "+ adminCurrentUserLbl.getText() + " account");
+        Dimension buttonSize              = new Dimension(230, 30);
+
+        adminViewUserData.setPreferredSize(buttonSize);
+        adminViewUserSearches.setPreferredSize(buttonSize);
+        adminRestoreEntireHistory.setPreferredSize(buttonSize);
+        adminDeleteCurrentUser.setPreferredSize(buttonSize);
+
+        optsPanel.setLayout(new GridBagLayout());
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(5,10,5,10);
+        c.gridx = 0;
+        c.gridy = 0;
+        optsPanel.add(adminViewUserData, c);
+        c.gridx = 0;
+        c.gridy = 1;
+        optsPanel.add(adminViewUserSearches, c);
+        c.gridx = 0;
+        c.gridy = 2;
+        optsPanel.add(adminRestoreEntireHistory, c);
+        c.gridx = 0;
+        c.gridy = 3;
+        optsPanel.add(adminDeleteCurrentUser, c);
+
+        return optsPanel;
+    }
+
+
+    private JPanel createAdminUsersTable(){
+
+        String [] colNames = {"Description", "Category", "Price", "Date Created"};
+
+        JPanel tablePanel    = new JPanel();
+        adminTblModel        = new DefaultTableModel(colNames, 0);
+        JTable adminResTable = new JTable(adminTblModel);
+        JScrollPane scrollpane = new JScrollPane(adminResTable);
+
+        scrollpane.setPreferredSize(new Dimension(700, 600));
+        scrollpane.setMinimumSize(adminResTable.getPreferredSize());
+
+
+        tablePanel.setLayout(new GridBagLayout());
+        GridBagConstraints tableCons = new GridBagConstraints();
+        tableCons.gridx = 0;
+        tableCons.gridy = 0;
+        tablePanel.add(scrollpane, tableCons);
+
+        return tablePanel;
+    }
+
+    private JPanel createUsersListPanel(){
+        String [] users = {"user id", "user name"};
+        JPanel usersPanel      = new JPanel();
+        adminUsersListModel    = new DefaultTableModel(users, 0);
+        JTable usersListTable  = new JTable(adminUsersListModel);
+        JScrollPane scrollPane = new JScrollPane(usersListTable);
+        usersList = new JComboBox();
+
+        usersListTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+
+        scrollPane.setPreferredSize(new Dimension(200, 600));
+        scrollPane.setMinimumSize(usersPanel.getPreferredSize());
+
+        usersPanel.setLayout(new GridBagLayout());
+        GridBagConstraints usersCons = new GridBagConstraints();
+        usersCons.insets = new Insets(0,10,0,10);
+        usersCons.gridx = 0;
+        usersCons.gridy = 0;
+        usersList.addItem("VIEW ALL USERS");
+        usersPanel.add(scrollPane, usersCons);
+
+
+        return usersPanel;
     }
 
     private JPanel createSearchOptions(){
@@ -498,9 +604,9 @@ public class Main {
 
         String [] colNames = {"Description", "Category", "Price", "Date Created"};
 
-        tableModel             = new DefaultTableModel(colNames, 0);
+        resultsTblModel        = new DefaultTableModel(colNames, 0);
         JPanel lowerPanel      = new JPanel();
-        JTable resultsTable    = new JTable(tableModel);
+        JTable resultsTable    = new JTable(resultsTblModel);
         JScrollPane scrollPane = new JScrollPane(resultsTable);
 
         resultsTable.getColumnModel().getColumn(0).setPreferredWidth(300);
@@ -824,12 +930,12 @@ public class Main {
     private void deleteResult(){
         if( this.currentSession.isViewingEmailReport() ){
             this.currentSession.deleteItemFromEmailReport(currentRow);
-            tableModel.removeRow(currentRow);
+            resultsTblModel.removeRow(currentRow);
         }
         else {
             Boolean removed = currentSession.deleteSingleResult(currentRow);
             if( removed ){
-                tableModel.removeRow(currentRow);
+                resultsTblModel.removeRow(currentRow);
                 msgField.setText(currentSession.getSearches().get(currentSession.getCurrentSearch()).size() + " items");
             }
         }
@@ -842,7 +948,7 @@ public class Main {
         else{
             boolean deleted = currentSession.deleteCurrentSearch();
             if( deleted ) {
-                tableModel.setRowCount(0);
+                resultsTblModel.setRowCount(0);
                 if( !currentSession.getCurrentSearch().equals("absolutelyEverythingFromAllTime")) {
                     DefaultComboBoxModel model = (DefaultComboBoxModel) deleteList.getModel();
                     int index = model.getIndexOf(currentSession.getCurrentSearch());
@@ -862,7 +968,7 @@ public class Main {
     private void deleteEmailReport(){
         if( this.currentSession.isViewingEmailReport() ) {
             this.currentSession.deleteEmailReport();
-            this.tableModel.setRowCount(0);
+            this.resultsTblModel.setRowCount(0);
             this.msgField.setText("Report deleted and cannot be recovered");
         }
         else{
@@ -918,7 +1024,7 @@ public class Main {
         signUpUserNameField.setText("");
         searchField.setText("Search on Etsy.com");
         accNewPassField.setText("");
-        tableModel.setRowCount(0);
+        resultsTblModel.setRowCount(0);
         searchField.setText("");
         msgField.setText("");
         emailField.setText("Enter Email");
@@ -958,6 +1064,8 @@ public class Main {
             if( model.getIndexOf(search) == -1 ){
                 deleteList.addItem(search);
             }
+            //log data
+            currentSession.logData(FileOutput.INSERT, results, search);
         }
         else{
             msgField.setText("Error downloading, try removing search filters or Etsy blocked just us");
@@ -966,7 +1074,7 @@ public class Main {
 
     private void loadTableRows(ArrayList<Item> results){
         if( results != null ) {
-            tableModel.setRowCount(0);
+            resultsTblModel.setRowCount(0);
             for (Item item : results) {
                 if (item != null) {
                     Object[][] newRow = new Object[1][4];
@@ -974,7 +1082,7 @@ public class Main {
                     newRow[0][1] = item.getCategory();
                     newRow[0][2] = "$ " + item.getPrice();
                     newRow[0][3] = item.getTimeStamp();
-                    tableModel.addRow(newRow[0]);
+                    resultsTblModel.addRow(newRow[0]);
                 }
             }
         }

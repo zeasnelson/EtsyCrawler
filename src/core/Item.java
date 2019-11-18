@@ -81,4 +81,23 @@ public class Item implements Comparable<Item> {
         Double otherPrice = Double.parseDouble(otherItem.getPrice().trim().replaceAll(",", ""));
         return price.compareTo(otherPrice);
     }
+
+    public boolean equals(Object other){
+
+        // If the object is compared with itself then return true
+        if( this == other ){
+            return true;
+        }
+
+        /* Check if other is an instance of Item or not*/
+        if (!(other instanceof Item)) {
+            return false;
+        }
+
+        //Compare objects
+        Item otherItem = (Item)other;
+        return (   this.description.equals(otherItem.description)
+                && this.category.equals(otherItem.category)
+                && this.price.equals(otherItem.price));
+    }
 }

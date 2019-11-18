@@ -9,6 +9,8 @@ import java.util.*;
 
 public class UserSession {
 
+
+
     /**
      * ArrayList to store all items selected by the user to be emailed
      */
@@ -146,7 +148,36 @@ public class UserSession {
         if(results == null){
             results = searchOnEtsy(searchQuery, url);
         }
+
+
         return results;
+    }
+
+    public void logData(String operation, Item item, String searchQuery){
+        if( item == null ){
+            return;
+        }
+        ArrayList<Item> tempList = new ArrayList<>(1);
+        tempList.add(item);
+        logData(operation, tempList, searchQuery);
+    }
+
+    public void logData(String operation, ArrayList<Item> items, String searchQuery){
+        FileOutput log = new FileOutput(FileOutput.DATA_LOG, true);
+        for( Item item : items ){
+            log.print(operation + "\",\"");
+            log.print(searchQuery + "\",\"");
+            log.print(this.user.getUserId() + "\",\"");
+            log.print(this.user.getUserName() + "\",\"");
+            log.print(item.getDescription() + "\",\"");
+            log.print(item.getCategory() + "\",\"");
+            log.print(item.getPrice() + "\",\"");
+            log.print(item.getImgScr() + "\",\"");
+            log.print(item.getImgId() + "\",\"");
+            log.print(item.getTimeStamp() + "\",\"");
+            log.println();
+        }
+        log.close();
     }
 
     public ArrayList<Item> getResultsFromHistory(String searchQuery){
@@ -232,9 +263,13 @@ public class UserSession {
         if( searches.get(currentSearch) != null ){
             if( index > -1 && index < searches.get(currentSearch).size() ){
                 Integer imgId = searches.get(currentSearch).get(index).getImgId();
-
-                searches.get(currentSearch).remove(index);
+                Item item = searches.get(currentSearch).remove(index);
                 searchHistory.remove(currentSearch);
+
+                //log data
+                logData(FileOutput.DELETE, item, currentSearch);
+
+                //delete local image if it was downloaded
                 File localImg = new File("appdata/images/"+imgId+".jpg");
                 if( localImg.exists() ){
                     localImg.delete();
@@ -258,6 +293,10 @@ public class UserSession {
             return true;
         }
         else if( searchHistory.get(currentSearch) != null ){
+            //log data before delete
+            logData(FileOutput.DELETE, searches.get(currentSearch), currentSearch);
+
+            //delete from user's profile
             searchHistory.remove(currentSearch);
             searches.remove(currentSearch);
             return true;

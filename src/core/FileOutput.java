@@ -9,6 +9,12 @@ import java.io.*;
  */
 public class FileOutput{
 
+
+    public final static String DATA_LOG= "appdata/log/datalog.txt";
+    public final static String ACTIVITY_LOG= "appdata/log/activitylog";
+    public final static String INSERT = "INSERT";
+    public final static String DELETE = "DELETE";
+
     /**
      * Name of the file to open
      */
