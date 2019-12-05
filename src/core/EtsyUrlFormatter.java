@@ -1,22 +1,77 @@
 package core;
 
+
+/**
+ * This class is used to format the link when different search filters re applied by the user
+ */
+
 public class EtsyUrlFormatter {
-    private String mainURL;
+    /**
+     * To store the host, etsy.com in this case
+     */
+    private String hostURL;
+    /**
+     * To store the search key word
+     */
     private String searchQuery;
+
+    /**
+     * to store the category
+     */
     private String category;
+    /**
+     * free shipping flag
+     */
     private String freeShipping;
+    /**
+     * items on sale flag
+     */
     private String sale;
+    /**
+     * items color flag
+     */
     private String color;
+    /**
+     * item type flag
+     */
     private String itemType;
+    /**
+     * if the item is customizable flag
+     */
     private String customizable;
+    /**
+     * if item can be wrapped flag
+     */
     private String giftWrappable;
+    /**
+     * if item is etsy giftable
+     */
     private String etsyGiftable;
+    /**
+     * ship to country flag
+     */
     private String shipTo;
+
+    /**
+     * item min price flag
+     */
     private String priceMin;
+
+    /**
+     * item max price flag
+     */
     private String priceMax;
 
+    /**
+     * url stores a already formatted url
+     */
+    private String formattedUrl;
+
+    /**
+     * init all fields
+     */
     public EtsyUrlFormatter(){
-        this.mainURL = "https://www.etsy.com/search";
+        this.hostURL = "https://www.etsy.com/search";
         this.searchQuery = "";
         this.category = "";
         this.freeShipping = "";
@@ -31,8 +86,12 @@ public class EtsyUrlFormatter {
         this.priceMax = "";
     }
 
+    /**
+     * Concatenates all fields of this class to create a final url with all filters specified
+     * @return a formatted url
+     */
     public String getFormatedUrl(){
-        return (  mainURL
+        return (  hostURL
                 + itemType
                 + category
                 +"?q="+searchQuery
@@ -50,56 +109,16 @@ public class EtsyUrlFormatter {
 
     }
 
+
+
+    //Getters and setters for all fields
+
+    public String getFormattedUrl() {
+        return formattedUrl;
+    }
+
     public String getSearchQuery() {
         return searchQuery;
-    }
-
-    public String getMainURL() {
-        return mainURL;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public String getFreeShipping() {
-        return freeShipping;
-    }
-
-    public String getSale() {
-        return sale;
-    }
-
-    public String getPriceMin() {
-        return priceMin;
-    }
-
-    public String getPriceMax() {
-        return priceMax;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public String getItemType() {
-        return itemType;
-    }
-
-    public String getCustomizable() {
-        return customizable;
-    }
-
-    public String getGiftWrappable() {
-        return giftWrappable;
-    }
-
-    public String getEtsyGiftable() {
-        return etsyGiftable;
-    }
-
-    public String getShipTo() {
-        return shipTo;
     }
 
     public void setCategory(String category) {
@@ -151,4 +170,7 @@ public class EtsyUrlFormatter {
         this.searchQuery = trim.replaceAll(" ", "%20");
     }
 
+    public void setFormattedUrl(String formattedUrl) {
+        this.formattedUrl = formattedUrl;
+    }
 }

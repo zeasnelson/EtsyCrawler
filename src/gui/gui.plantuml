@@ -1,0 +1,254 @@
+@startuml
+
+title __GUI's Class Diagram__\n
+
+  namespace gui {
+    class gui.GUI {
+        - accNewPassField : JTextField
+        - accUsrNmF : JTextField
+        - accountMsgLabel : JLabel
+        - accountPanel : JPanel
+        - adminAllUsersListTable : DefaultTableModel
+        - adminDeleteSelectedUser : JButton
+        - adminMsgLabel : JLabel
+        - adminPanel : JPanel
+        - adminRecoverSelectedItem : JButton
+        - adminTableRowIndex : int
+        - adminTblModel : DefaultTableModel
+        - adminUsersListModel : DefaultTableModel
+        - adminViewUserData : JButton
+        - adminViewUserDeletedData : JButton
+        - allUsersTable : JTable
+        - card : CardLayout
+        - category : JComboBox
+        - color : JComboBox
+        - currentRow : int
+        - customizable : JCheckBox
+        - deleteList : JComboBox
+        - emailField : JTextField
+        - giftCards : JCheckBox
+        - giftWrap : JCheckBox
+        - itemType : JComboBox
+        - mainFrame : JFrame
+        - mainPanel : JPanel
+        - maxPrice : JTextField
+        - minPrice : JTextField
+        - msgField : JLabel
+        - offer : JComboBox
+        - passwordField : JTextField
+        - reconstructAll : JButton
+        - reconstructUser : JButton
+        - resImage : ImageIcon
+        - resLabel : JLabel
+        - resultsPanel : JPanel
+        - resultsTable : JTable
+        - resultsTblModel : DefaultTableModel
+        - searchField : JTextField
+        - selectedUserId : String
+        - shipTo : JComboBox
+        - signInErrorLabel : JLabel
+        - signUpPassField : JTextField
+        - signUpUserNameField : JTextField
+        - singInPanel : JPanel
+        - usernameField : JTextField
+        - usersListTable : JTable
+        + GUI()
+        - addCurrentSearchToEmailReport()
+        - addItemToEmailReport()
+        - changeUserPassword()
+        - createAccountPanel()
+        - createAdminButtons()
+        - createAdminPanel()
+        - createAdminUsersTable()
+        - createCenterPanel()
+        - createNorthPanel()
+        - createResultsPanel()
+        - createSearchOptions()
+        - createSignInPanel()
+        - createSouthPanel()
+        - createUsersListPanel()
+        - deleteCurrentSearch()
+        - deleteEmailReport()
+        - deleteResult()
+        - deleteResultFromDeleteHistory()
+        - deleteSelectedUser()
+        - getData()
+        - getMaxPrice()
+        - getMinPrice()
+        - getUserDeletedDataById()
+        - loadAdminResultsTable()
+        - loadAllDeletedSearches()
+        - loadAllUsersTable()
+        - loadResultsTableRows()
+        - logOutUser()
+        - reconstructAllUsersData()
+        - reconstructSelectedUserData()
+        - renderMainFrame()
+        - renderMainPanel()
+        - resetSearchFilters()
+        - sendEmailTo()
+        - setUpUser()
+        - showEmailReport()
+        - showItemPicture()
+        - signIn()
+        - signInUserAsGuest()
+        - signOutAdmin()
+        - signUp()
+        - sortByDateASC()
+        - sortByDateDESC()
+        - sortByPrice()
+        - switchToAccountPanel()
+        - switchToAdminPanel()
+        - switchToResults()
+        - switchToSignInPanel()
+        - validateEmailAddress()
+        - validatePassword()
+        - validateUserName()
+        - viewSelectedUserSavedData()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.CustomizeBoxListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.EmailFieldFocusListener {
+        + focusGained()
+        + focusLost()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.GiftCardItemListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.GiftWrapListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.HistoryItemSelectedListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.ItemTypeListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.MaxPriceFocusListener {
+        + focusGained()
+        + focusLost()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.MinPriceFocusListener {
+        + focusGained()
+        + focusLost()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.SearchByCategoryItemListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.SearchFieldFocusListener {
+        + focusGained()
+        + focusLost()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.SetColorItemListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.SetOfferItemListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.ShipToItemListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  namespace gui {
+    class gui.GUI.SortItemListener {
+        + itemStateChanged()
+    }
+  }
+  
+
+  gui.GUI o-- manager.Admin : admin
+  gui.GUI o-- manager.UserSession : currentSession
+  gui.GUI o-- core.EtsyUrlFormatter : etsyUrlFormatter
+  gui.GUI +-down- gui.GUI.CustomizeBoxListener
+  gui.GUI +-down- gui.GUI.EmailFieldFocusListener
+  gui.GUI +-down- gui.GUI.GiftCardItemListener
+  gui.GUI +-down- gui.GUI.GiftWrapListener
+  gui.GUI +-down- gui.GUI.HistoryItemSelectedListener
+  gui.GUI +-down- gui.GUI.ItemTypeListener
+  gui.GUI +-down- gui.GUI.MaxPriceFocusListener
+  gui.GUI +-down- gui.GUI.MinPriceFocusListener
+  gui.GUI +-down- gui.GUI.SearchByCategoryItemListener
+  gui.GUI +-down- gui.GUI.SearchFieldFocusListener
+  gui.GUI +-down- gui.GUI.SetColorItemListener
+  gui.GUI +-down- gui.GUI.SetOfferItemListener
+  gui.GUI +-down- gui.GUI.ShipToItemListener
+  gui.GUI +-down- gui.GUI.SortItemListener
+  gui.GUI.CustomizeBoxListener .up.|> java.awt.event.ItemListener
+  gui.GUI.EmailFieldFocusListener .up.|> java.awt.event.FocusListener
+  gui.GUI.GiftCardItemListener .up.|> java.awt.event.ItemListener
+  gui.GUI.GiftWrapListener .up.|> java.awt.event.ItemListener
+  gui.GUI.HistoryItemSelectedListener .up.|> java.awt.event.ItemListener
+  gui.GUI.ItemTypeListener .up.|> java.awt.event.ItemListener
+  gui.GUI.MaxPriceFocusListener .up.|> java.awt.event.FocusListener
+  gui.GUI.MinPriceFocusListener .up.|> java.awt.event.FocusListener
+  gui.GUI.SearchByCategoryItemListener .up.|> java.awt.event.ItemListener
+  gui.GUI.SearchFieldFocusListener .up.|> java.awt.event.FocusListener
+  gui.GUI.SetColorItemListener .up.|> java.awt.event.ItemListener
+  gui.GUI.SetOfferItemListener .up.|> java.awt.event.ItemListener
+  gui.GUI.ShipToItemListener .up.|> java.awt.event.ItemListener
+  gui.GUI.SortItemListener .up.|> java.awt.event.ItemListener
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

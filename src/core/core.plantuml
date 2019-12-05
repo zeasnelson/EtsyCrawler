@@ -1,0 +1,257 @@
+@startuml
+
+title __CORE's Class Diagram__\n
+
+  namespace core {
+    class core.DBDriver {
+        {static} - url : String
+        {static} + addNewUser()
+        {static} + deleteUserByUserId()
+        {static} + getAllUsers()
+        {static} + getAllUsersById()
+        {static} + printAllTableRows()
+        {static} + updateColByUserId()
+        {static} + userExists()
+        {static} + userExists()
+    }
+  }
+  
+
+  namespace core {
+    class core.DownloadURLImage {
+        {static} + downloadImage()
+    }
+  }
+  
+
+  namespace core {
+    class core.Email {
+        - PASSWORD : String
+        - SMTP_SERVER : String
+        - body : String
+        - from : String
+        - subject : String
+        - to : String
+        + addLineToBody()
+        + sendEmail()
+        + setEmailBody()
+        + setHeader()
+        + setRecipient()
+        + toString()
+    }
+  }
+  
+
+  namespace core {
+    class core.EtsyUrlFormatter {
+        - category : String
+        - color : String
+        - customizable : String
+        - etsyGiftable : String
+        - freeShipping : String
+        - giftWrappable : String
+        - hostURL : String
+        - itemType : String
+        - priceMax : String
+        - priceMin : String
+        - sale : String
+        - searchQuery : String
+        - shipTo : String
+        + EtsyUrlFormatter()
+        + getFormatedUrl()
+        + getSearchQuery()
+        + setCategory()
+        + setColor()
+        + setCustomizable()
+        + setEtsyGiftable()
+        + setFreeShipping()
+        + setGiftWrappable()
+        + setItemType()
+        + setPriceMax()
+        + setPriceMin()
+        + setSale()
+        + setSearchQuery()
+        + setShipTo()
+    }
+  }
+  
+
+  namespace core {
+    class core.FileInput {
+        ~ inputFileName : String
+        - reader : BufferedReader
+        + FileInput()
+        + close()
+        + getInputFileName()
+        + getNextChar()
+        + getNextNonWhiteSpace()
+        + readLine()
+    }
+  }
+  
+
+  namespace core {
+    class core.FileOutput {
+        {static} + ACTIVITY_LOG : String
+        {static} + DATA_LOG : String
+        {static} + DELETE : String
+        {static} + INSERT : String
+        ~ append : Boolean
+        - outputFileName : String
+        - printWriter : PrintWriter
+        - writer : BufferedWriter
+        + FileOutput()
+        + FileOutput()
+        + appendToFile()
+        + close()
+        {static} + createDir()
+        {static} + createFile()
+        + getOutputFileName()
+        + print()
+        + print()
+        + print()
+        + printObj()
+        + println()
+        + println()
+    }
+  }
+  
+
+  namespace core {
+    class core.HTMLParser {
+        - charCode : int
+        - ignoredTags : Set<String>
+        - tagName : String
+        - voidTags : Set<String>
+        + HTMLParser()
+        + getAllItems()
+        + getItem()
+        + getNextNode()
+        + parse()
+        + printLine()
+        + printTreeIndented()
+        - discardComment()
+        - discardTags()
+        - getAllItems()
+        - getClosingTag()
+        - getImgSrc()
+        - getOpeningTag()
+        - getTagClassName()
+        - getTagIDorClass()
+        - getTagId()
+        - getTagInnerHTML()
+        - initIgnoredTagsSet()
+        - initVoidTags()
+        - parseTag()
+        - printTreeIndented()
+    }
+  }
+  
+
+  namespace core {
+    class core.Item {
+        - category : String
+        - description : String
+        - imgId : Integer
+        - imgScr : String
+        - price : String
+        - searchQuery : String
+        - timeStamp : String
+        - userId : String
+        + Item()
+        + compareTo()
+        + equals()
+        + getCategory()
+        + getDescription()
+        + getImgId()
+        + getImgScr()
+        + getPrice()
+        + getSearchQuery()
+        + getTimeStamp()
+        + getUserId()
+        + setCategory()
+        + setDescription()
+        + setImgId()
+        + setImgScr()
+        + setPrice()
+        + setSearchQuery()
+        + setTimeStamp()
+        + setUserId()
+        + toString()
+    }
+  }
+  
+
+  namespace core {
+    class core.TagNode {
+        - innerHTML : String
+        - isOpeningTag : Boolean
+        - isVoidTag : Boolean
+        - tagAtt : String
+        - tagList : List<TagNode>
+        - tagName : String
+        + TagNode()
+        + TagNode()
+        + addChild()
+        + getChild()
+        + getChildren()
+        + getInnerHTML()
+        + getParentTag()
+        + getTagAtt()
+        + getTagName()
+        + isOpeningTag()
+        + isVoidTag()
+        + setInnerHTML()
+        + setOpeningTag()
+        + setParentTag()
+        + setTagAtt()
+        + setTagName()
+        + setVoidTag()
+        + toString()
+        - initVariables()
+    }
+  }
+  
+
+  namespace core {
+    class core.User {
+        - userId : String
+        - userName : String
+        - userPass : String
+        + User()
+        + changePassword()
+        + getUserId()
+        + getUserName()
+        + toString()
+    }
+  }
+  
+
+  namespace core {
+    class core.WebpageReaderWithAgent {
+        - URL : String
+        - USER_AGENT : String
+        + WebpageReaderWithAgent()
+        + close()
+        + getURLInputStream()
+        + read()
+        + writeToFile()
+    }
+  }
+  
+
+  core.HTMLParser o-- core.FileInput : reader
+  core.HTMLParser o-- core.TagNode : root
+  core.Item .up.|> java.lang.Comparable
+  core.TagNode o-- core.TagNode : parentTag
+  core.WebpageReaderWithAgent o-- core.FileOutput : fileWriter
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

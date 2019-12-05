@@ -9,39 +9,73 @@ import java.util.*;
 
 public class UserSession {
 
+
+
+    /**
+     * ArrayList to store all items selected by the user to be emailed
+     */
+
     private ArrayList<Item> emailList;
+    /**
+     * Stores the file name of the current user
+     * This file store all search keys and url
+     */
+
     private String userSearchKeyDir;
+    /**
+     * Store the local directory for the current user
+     * This directory will be a file with the user's unique id in which all search data will be stored
+     */
+
     private String baseDir;
-    private Vector<String> searchHistory;
+    /**
+     * Store the search key for the most recent search performed by the user
+     */
+
     private String currentSearch;
+    /**
+     * To store the information of the user currently logged in
+     */
+
     private User user;
+    /**
+     * HasMap to store all user searches
+     * This hashmap is written to the user's local directory when the user logs out from the account
+     */
+
     private HashMap<String, ArrayList<Item>> searches;
+
+    /**
+     * Flag to know when the user is viewing the email report to enable/disable specific functions
+     */
     private Boolean isViewingEmailReport;
+
+    /**
+     * Flag to know when the current user is logged is as guest or member
+     * This flag allows to disable/enable specific functions
+     */
     private Boolean isGuestUser;
-    private EtsyUrlFormatter etsyUrl;
+
+    /**
+     * HashMap contains all search keys, each search key is associated with its own unique url
+     * This HashMap is always initialized when the user logs in to enable viewing history
+     */
+    private HashMap<String, String> searchHistory;
 
 
     public UserSession(User user) {
         this.user = user;
         this.searches = new HashMap<>();
-        this.searchHistory = new Vector<>(5);
+        this.searchHistory = new HashMap<>(10);
         this.emailList = new ArrayList<>();
         this.isViewingEmailReport = false;
         this.baseDir = "appdata/usersdata/"+user.getUserId()+"/";
         this.userSearchKeyDir = "searchKey.txt";
         new File(baseDir).mkdir();
         this.isGuestUser = false;
-        this.etsyUrl = new EtsyUrlFormatter();
     }
 
-    public EtsyUrlFormatter getEtsyUrl(){
-        return this.etsyUrl;
-    }
-
-    public void setEtsyUrl(EtsyUrlFormatter etsyUrl){
-        this.etsyUrl = etsyUrl;
-    }
-    public Vector<String> getSearchHistory() {
+    public HashMap<String, String> getSearchHistory() {
         return searchHistory;
     }
 
@@ -73,20 +107,16 @@ public class UserSession {
         return isViewingEmailReport;
     }
 
-    public void setViewingEmailReport(Boolean viewingEmailReport) {
-        isViewingEmailReport = viewingEmailReport;
-    }
-
     public ArrayList<Item> getAllSearches(){
         ArrayList<Item> allItems = new ArrayList<>();
         //remove it becuase the users might have searched for something new
         if( searches.containsKey("absolutelyEverythingFromAllTime")){
             searches.remove("absolutelyEverythingFromAllTime");
         }
-        EtsyUrlFormatter etsyUrl = new EtsyUrlFormatter();
-        for( String searchQuery : searchHistory ){
-            etsyUrl.setSearchQuery(searchQuery);
-            allItems.addAll(search(etsyUrl));
+        for( String searchQuery : searchHistory.keySet() ){
+            ArrayList<Item> results = search(searchQuery, searchHistory.get(searchQuery));
+            if( results != null )
+                allItems.addAll(results);
         }
         if( allItems == null ){
             return null;
@@ -96,26 +126,58 @@ public class UserSession {
         return allItems;
     }
 
-    public ArrayList<Item> search(EtsyUrlFormatter etsyUrl){
-        System.out.println(etsyUrl.getFormatedUrl());
-        String searchQuery = etsyUrl.getSearchQuery();
+    public ArrayList<Item> search(String searchQuery, String url){
+        System.out.println(url);
         currentSearch = searchQuery;
         this.isViewingEmailReport = false;
         ArrayList<Item> results = null;
 
-        //check if it already is stored in the HashMap
-        if( searches.containsKey(searchQuery)){
-            results = searches.get(searchQuery);
+        String historyUrl = searchHistory.get(searchQuery);
+        if( searchHistory != null &&  historyUrl != null && historyUrl.equals(url) ) {
+            //check if it already is stored in the HashMap
+            if (searches.containsKey(searchQuery)) {
+                results = searches.get(searchQuery);
+            }
+            //check if it is stored in a local file
+            if (results == null && !isGuestUser) {
+                results = getResultsFromHistory(searchQuery);
+            }
         }
-        //check if it is stored in a local file
-        if( results == null && searchHistory.contains(searchQuery) && !isGuestUser ){
-            results = getResultsFromHistory(searchQuery);
-        }
+
         //request results on Etsy.com
         if(results == null){
-            results = searchOnEtsy(etsyUrl);
+            results = searchOnEtsy(searchQuery, url);
         }
+
+
         return results;
+    }
+
+    public void logData(String operation, Item item, String searchQuery){
+        if( item == null ){
+            return;
+        }
+        ArrayList<Item> tempList = new ArrayList<>(1);
+        tempList.add(item);
+        logData(operation, tempList, searchQuery);
+    }
+
+    public void logData(String operation, ArrayList<Item> items, String searchQuery){
+        FileOutput log = new FileOutput(FileOutput.DATA_LOG, true);
+        for( Item item : items ){
+            log.print(operation + "\",\"");
+            log.print(searchQuery + "\",\"");
+            log.print(this.user.getUserId() + "\",\"");
+            log.print(this.user.getUserName() + "\",\"");
+            log.print(item.getDescription() + "\",\"");
+            log.print(item.getCategory() + "\",\"");
+            log.print(item.getPrice() + "\",\"");
+            log.print(item.getImgScr() + "\",\"");
+            log.print(item.getImgId() + "\",\"");
+            log.print(item.getTimeStamp() + "\",\"");
+            log.println();
+        }
+        log.close();
     }
 
     public ArrayList<Item> getResultsFromHistory(String searchQuery){
@@ -150,11 +212,10 @@ public class UserSession {
         return results;
     }
 
-    public ArrayList<Item> searchOnEtsy(EtsyUrlFormatter etsyUrl){
-        String searchQuery = etsyUrl.getSearchQuery();
+    public ArrayList<Item> searchOnEtsy(String searchQuery, String url){
         String localDir = "appdata/cache/results.html";
         //Download the html file
-        WebpageReaderWithAgent downLoadHTML = new WebpageReaderWithAgent(etsyUrl.getFormatedUrl(), localDir);
+        WebpageReaderWithAgent downLoadHTML = new WebpageReaderWithAgent(url, localDir);
         Boolean downloadSuccess = downLoadHTML.writeToFile();
         if( !downloadSuccess ){
             return null;
@@ -167,17 +228,16 @@ public class UserSession {
             return null;
         }
         searches.put(searchQuery, results);
-        this.searchHistory.add(searchQuery);
+        this.searchHistory.put(searchQuery, url);
         return results;
     }
-
 
     public void storeUserActivity(){
 
         //separate file to save only search keys, not results
         FileOutput writer = new FileOutput(baseDir+userSearchKeyDir);
-        for( String searchQuery: searchHistory ){
-            writer.println(searchQuery);
+        for( String searchQuery: searchHistory.keySet() ){
+            writer.println(searchQuery + "\",\"" + searchHistory.get(searchQuery));
         }
         writer.close();
 
@@ -203,9 +263,13 @@ public class UserSession {
         if( searches.get(currentSearch) != null ){
             if( index > -1 && index < searches.get(currentSearch).size() ){
                 Integer imgId = searches.get(currentSearch).get(index).getImgId();
-
-                searches.get(currentSearch).remove(index);
+                Item item = searches.get(currentSearch).remove(index);
                 searchHistory.remove(currentSearch);
+
+                //log data
+                logData(FileOutput.DELETE, item, currentSearch);
+
+                //delete local image if it was downloaded
                 File localImg = new File("appdata/images/"+imgId+".jpg");
                 if( localImg.exists() ){
                     localImg.delete();
@@ -217,13 +281,22 @@ public class UserSession {
     }
 
     public boolean deleteCurrentSearch(){
+        if( currentSearch == null ){
+            return false;
+        }
         if( currentSearch.equals("absolutelyEverythingFromAllTime") ){
             Set<String> keys = searches.keySet();
             searches.keySet().removeAll(keys);
-            searchHistory.removeAllElements();
+            //remove all search history items
+            keys = searchHistory.keySet();
+            searchHistory.keySet().removeAll(keys);
             return true;
         }
-        else if( searchHistory.contains(currentSearch) ){
+        else if( searchHistory.get(currentSearch) != null ){
+            //log data before delete
+            logData(FileOutput.DELETE, searches.get(currentSearch), currentSearch);
+
+            //delete from user's profile
             searchHistory.remove(currentSearch);
             searches.remove(currentSearch);
             return true;
@@ -240,15 +313,16 @@ public class UserSession {
         if( file.exists() ){
             FileInput reader = new FileInput(userLocalDir);
             String search = reader.readLine();
+            String [] searchSplit;
             while (search != null) {
-                searchHistory.add(search);
+                searchSplit = search.split("\",\"");
+                searchHistory.put(searchSplit[0], searchSplit[1]);
                 search = reader.readLine();
             }
             reader.close();
             file.delete();
         }
     }
-
 
     public void deleteEmailReport(){
         this.emailList = new ArrayList<>();
@@ -399,30 +473,5 @@ public class UserSession {
             }
         });
     }
-
-    public static void main(String[] args) {
-
-    }
-
-/*
-for( Item i : results ){
-            System.out.println(i.getTimeStamp());
-        }
-        System.out.println("sorted:\n");
-        Collections.sort(results, Comparator.comparing(Item::getTimeStamp));
-
-        for( Item i : results ){
-            System.out.println(i.getTimeStamp());
-        }
- */
-
-
-//    public static void main(String[] args) {
-//        User u = new User();
-//        u.setUserId("101");
-//        UserSession s = new UserSession(u);
-//        s.setLocalSearch(true);
-//        s.setUser(u);
-//    }
 
 }
