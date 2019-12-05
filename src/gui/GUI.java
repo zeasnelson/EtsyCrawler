@@ -1,5 +1,6 @@
 package gui;
 import core.*;
+import manager.Admin;
 import manager.UserSession;
 
 import javax.swing.*;
@@ -52,7 +53,7 @@ public class Main {
     private JLabel msgField;
     private JLabel resLabel;
     private JLabel signInErrorLabel;
-    private JLabel adminCurrentUserLbl;
+    private JLabel adminMsgLabel;
 
 
     private JPanel  mainPanel;
@@ -65,15 +66,24 @@ public class Main {
     private DefaultTableModel resultsTblModel;
     private DefaultTableModel adminTblModel;
     private DefaultTableModel adminUsersListModel;
+    private DefaultTableModel adminAllUsersListTable;
 
     private ImageIcon resImage;
 
     private JButton reset;
-
+    private JButton reconstructUser;
+    private JButton adminViewUserData;
+    private JButton adminRecoverSelectedItem;
+    private JButton adminDeleteSelectedUser;
+    private JButton adminViewUserDeletedData;
+    private JButton reconstructAll;
 
 
     private int currentRow;
+    private int adminTableRowIndex;
+    private String selectedUserId;
     private UserSession currentSession;
+    private Admin admin;
     private EtsyUrlFormatter etsyUrlFormatter;
 
 
@@ -110,7 +120,7 @@ public class Main {
         mainPanel.add("accountPanel", accountPanel);
         mainPanel.add("adminPanel", adminPanel);
 
-        card.show(mainPanel, "adminPanel");
+        card.show(mainPanel, "signInPanel");
 
         mainFrame.add(mainPanel);
     }
@@ -125,7 +135,7 @@ public class Main {
         JButton signInAsGuest    = new JButton("Sign in as guest");
         JLabel userNameLabel     = new JLabel("username:");
         JLabel passwordLabel     = new JLabel("password:");
-        JButton    signInAsAdmin = new JButton("Sign in as Admin");
+        JButton signInAsAdmin    = new JButton("Sign in as Admin");
 
         JLabel     signUpLabel      = new JLabel("Sign Up");
         JLabel     signUpUsrNmLabel = new JLabel("Enter user name: ");
@@ -136,14 +146,12 @@ public class Main {
         JLabel     passRuleLabel    = new JLabel("Only letters or numbers, no spaces or symbols");
         JButton    signUpBtn        = new JButton("Sign Up");
 
-
-
         signInBtn.addActionListener(e -> signIn() );
         signUpBtn.addActionListener(e -> signUp());
         signInAsGuest.addActionListener( e -> signInUserAsGuest() );
+        signInAsAdmin.addActionListener( e -> switchToAdminPanel());
 
         singInPanel.setLayout(new GridBagLayout());
-
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -156,12 +164,14 @@ public class Main {
         singInPanel.add(signIn, constraints);
         signIn.setForeground(Color.BLUE);
 
+        constraints.gridwidth = 2;
         constraints.gridx = 1;
         constraints.gridy = 0;
         singInPanel.add(signInErrorLabel, constraints);
         signInErrorLabel.setBorder( new EmptyBorder(20,0,20,0));
         signInErrorLabel.setForeground(Color.RED);
 
+        constraints.gridwidth = 1;
         constraints.gridx = 0;
         constraints.gridy = 1;
         singInPanel.add(userNameLabel, constraints);
@@ -253,10 +263,7 @@ public class Main {
     }
 
     private void createAdminPanel(){
-
         adminPanel        = new JPanel();
-
-        adminCurrentUserLbl = new JLabel("");
 
         JPanel optsPanel       = createAdminButtons();
         JPanel adminUsersPanel = createUsersListPanel();
@@ -269,17 +276,40 @@ public class Main {
     }
 
     private JPanel createAdminButtons(){
-        JPanel optsPanel                  = new JPanel();
-        JButton adminViewUserData         = new JButton("View " + adminCurrentUserLbl.getText() + " data");
-        JButton adminViewUserSearches     = new JButton("View "+ adminCurrentUserLbl.getText() +" searches");
-        JButton adminRestoreEntireHistory = new JButton("Restore "+ adminCurrentUserLbl.getText() + " history");
-        JButton adminDeleteCurrentUser    = new JButton("delete "+ adminCurrentUserLbl.getText() + " account");
-        Dimension buttonSize              = new Dimension(230, 30);
+        JPanel optsPanel               = new JPanel();
+        JButton viewAllDeletedSearches = new JButton("View all deleted searches");
+        reconstructAll                 = new JButton("Recover all deleted data");
+        adminRecoverSelectedItem       = new JButton("Recover selected result");
 
+        adminViewUserData              = new JButton("View saved data");
+        adminViewUserDeletedData       = new JButton("View deleted searches");
+        reconstructUser                = new JButton("Recover deleted data");
+
+        adminDeleteSelectedUser        = new JButton("delete account");
+
+        JButton signOut                = new JButton("Sign out");
+        Dimension buttonSize           = new Dimension(230, 30);
+
+
+        //click listeners
+        reconstructAll.addActionListener( e -> reconstructAllUsersData());
+        viewAllDeletedSearches.addActionListener( e -> loadAllDeletedSearches());
+        adminRecoverSelectedItem.addActionListener( e -> deleteResultFromDeleteHistory());
+        adminViewUserData.addActionListener(e -> viewSelectedUserSavedData());
+        adminViewUserDeletedData.addActionListener( e -> getUserDeletedDataById());
+        reconstructUser.addActionListener(e -> reconstructSelectedUserData());
+        adminDeleteSelectedUser.addActionListener( e -> deleteSelectedUser());
+
+        //set button sizes
+        signOut.addActionListener(e -> signOutAdmin());
         adminViewUserData.setPreferredSize(buttonSize);
-        adminViewUserSearches.setPreferredSize(buttonSize);
-        adminRestoreEntireHistory.setPreferredSize(buttonSize);
-        adminDeleteCurrentUser.setPreferredSize(buttonSize);
+        adminViewUserDeletedData.setPreferredSize(buttonSize);
+        adminRecoverSelectedItem.setPreferredSize(buttonSize);
+        adminDeleteSelectedUser.setPreferredSize(buttonSize);
+        reconstructAll.setPreferredSize(buttonSize);
+        reconstructUser.setPreferredSize(buttonSize);
+        viewAllDeletedSearches.setPreferredSize(buttonSize);
+
 
         optsPanel.setLayout(new GridBagLayout());
 
@@ -287,38 +317,82 @@ public class Main {
         c.insets = new Insets(5,10,5,10);
         c.gridx = 0;
         c.gridy = 0;
-        optsPanel.add(adminViewUserData, c);
+        optsPanel.add(viewAllDeletedSearches, c);
         c.gridx = 0;
         c.gridy = 1;
-        optsPanel.add(adminViewUserSearches, c);
+        optsPanel.add(reconstructAll, c);
+        c.insets.bottom = 40;
         c.gridx = 0;
         c.gridy = 2;
-        optsPanel.add(adminRestoreEntireHistory, c);
+        optsPanel.add(adminRecoverSelectedItem, c);
+
+        c.insets.bottom = 5;
         c.gridx = 0;
         c.gridy = 3;
-        optsPanel.add(adminDeleteCurrentUser, c);
+        optsPanel.add(adminViewUserData, c);
+        c.gridx = 0;
+        c.gridy = 4;
+        optsPanel.add(adminViewUserDeletedData, c);
+        c.insets.bottom = 40;
+        c.gridx = 0;
+        c.gridy = 5;
+        optsPanel.add(reconstructUser, c);
+        c.insets.bottom = 40;
+        c.gridx = 0;
+        c.gridy = 6;
+        optsPanel.add(adminDeleteSelectedUser, c);
+
+        c.gridx = 0;
+        c.gridy = 7;
+        optsPanel.add(signOut, c);
+
 
         return optsPanel;
     }
 
-
     private JPanel createAdminUsersTable(){
 
-        String [] colNames = {"Description", "Category", "Price", "Date Created"};
+        String [] colNames = {"User id", "Description", "Category", "Price", "Date Created"};
 
-        JPanel tablePanel    = new JPanel();
-        adminTblModel        = new DefaultTableModel(colNames, 0);
-        JTable adminResTable = new JTable(adminTblModel);
+        JPanel tablePanel      = new JPanel();
+        adminTblModel          = new DefaultTableModel(colNames, 0);
+        JTable adminResTable   = new JTable(adminTblModel);
         JScrollPane scrollpane = new JScrollPane(adminResTable);
 
-        scrollpane.setPreferredSize(new Dimension(700, 600));
-        scrollpane.setMinimumSize(adminResTable.getPreferredSize());
+        adminMsgLabel          = new JLabel(" ");
 
+        scrollpane.setPreferredSize(new Dimension(850, 650));
+        scrollpane.setMinimumSize(adminResTable.getPreferredSize());
+        adminResTable.setRowHeight(30);
+
+        adminResTable.getSelectionModel().addListSelectionListener(e -> {
+                if( !e.getValueIsAdjusting() ){
+                    if (adminResTable.getSelectedRow() > -1) {
+                        adminTableRowIndex = adminResTable.getSelectedRow();
+                    }
+                }
+            }
+        );
+
+
+        adminResTable.getColumnModel().getColumn(0).setPreferredWidth(2);
+        adminResTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+        adminResTable.getColumnModel().getColumn(2).setPreferredWidth(5);
+        adminResTable.getColumnModel().getColumn(3).setPreferredWidth(30);
+        adminResTable.getColumnModel().getColumn(4).setPreferredWidth(30);
 
         tablePanel.setLayout(new GridBagLayout());
         GridBagConstraints tableCons = new GridBagConstraints();
+        tableCons.insets = new Insets(0,0,20,0);
         tableCons.gridx = 0;
         tableCons.gridy = 0;
+        adminMsgLabel.setForeground(Color.BLUE);
+        adminMsgLabel.setFont( new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+        tablePanel.add(adminMsgLabel, tableCons);
+
+        tableCons.insets.bottom = 0;
+        tableCons.gridx = 0;
+        tableCons.gridy = 1;
         tablePanel.add(scrollpane, tableCons);
 
         return tablePanel;
@@ -329,22 +403,95 @@ public class Main {
         JPanel usersPanel      = new JPanel();
         adminUsersListModel    = new DefaultTableModel(users, 0);
         JTable usersListTable  = new JTable(adminUsersListModel);
-        JScrollPane scrollPane = new JScrollPane(usersListTable);
+        JScrollPane activeUserScrollPane = new JScrollPane(usersListTable);
+
+        adminAllUsersListTable = new DefaultTableModel(users, 0);
+        JTable allUsersTable   = new JTable(adminAllUsersListTable);
+        JScrollPane allUsersScrollPane = new JScrollPane(allUsersTable);
         usersList = new JComboBox();
 
-        usersListTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        allUsersTable.getSelectionModel().addListSelectionListener(e -> {
+                    if( !e.getValueIsAdjusting() ){
+                        if (allUsersTable.getSelectedRow() > -1) {
+                            int row = allUsersTable.getSelectedRow();
+                            Object o  = allUsersTable.getValueAt(row, 0);
+                            selectedUserId = (String)o;
+                            adminTableRowIndex = row;
+                            String userId = (String)allUsersTable.getValueAt(row, 0);
+                            System.out.println(userId);
+                            adminViewUserData.setText("View saved data");
+                            reconstructUser.setText("Recover deleted data");
+                            adminViewUserDeletedData.setText("View deleted searches");
+                            adminViewUserData.setEnabled(false);
+                            reconstructUser.setEnabled(false);
+                            adminViewUserDeletedData.setEnabled(false);
+                            adminDeleteSelectedUser.setEnabled(true);
+                            usersListTable.clearSelection();
+                            adminMsgLabel.setText(usersListTable.getValueAt(row, 1).toString());
+                        }
+                    }
+                }
+        );
 
-        scrollPane.setPreferredSize(new Dimension(200, 600));
-        scrollPane.setMinimumSize(usersPanel.getPreferredSize());
+
+        usersListTable.getSelectionModel().addListSelectionListener(e -> {
+                if( !e.getValueIsAdjusting() ){
+                    if (usersListTable.getSelectedRow() > -1) {
+                        adminTblModel.setRowCount(0);
+                        int row = usersListTable.getSelectedRow();
+                        Object o  = usersListTable.getValueAt(row, 0);
+                        selectedUserId = (String)o;
+                        String userName = (String)usersListTable.getValueAt(row, 1);
+                        adminViewUserData.setText("View " + userName + " saved data");
+                        reconstructUser.setText("Recover " + userName + " deleted data");
+                        adminViewUserDeletedData.setText("View " + userName + " deleted searches");
+                        adminViewUserData.setEnabled(true);
+                        reconstructUser.setEnabled(false);
+                        adminViewUserDeletedData.setEnabled(true);
+                        adminDeleteSelectedUser.setEnabled(false);
+                        adminRecoverSelectedItem.setEnabled(false);
+                        reconstructAll.setEnabled(false);
+                        allUsersTable.clearSelection();
+                        adminMsgLabel.setText(usersListTable.getValueAt(row, 1).toString());
+                    }
+                }
+            }
+        );
+
+
+        JLabel activeUsersLabel = new JLabel("Users with search history");
+        JLabel allUsersLabel    = new JLabel("All Users");
+
+        activeUserScrollPane.setPreferredSize(new Dimension(150, 200));
+        activeUserScrollPane.setMinimumSize(usersPanel.getPreferredSize());
+        usersListTable.setRowHeight(30);
+
+        allUsersScrollPane.setPreferredSize(new Dimension(150, 330));
+        allUsersScrollPane.setMinimumSize(usersPanel.getPreferredSize());
+        allUsersTable.setRowHeight(30);
 
         usersPanel.setLayout(new GridBagLayout());
         GridBagConstraints usersCons = new GridBagConstraints();
-        usersCons.insets = new Insets(0,10,0,10);
+        usersCons.insets = new Insets(0,10,5,10);
         usersCons.gridx = 0;
         usersCons.gridy = 0;
-        usersList.addItem("VIEW ALL USERS");
-        usersPanel.add(scrollPane, usersCons);
+        activeUsersLabel.setForeground(Color.BLUE);
+        usersPanel.add(activeUsersLabel, usersCons);
 
+        usersCons.insets.bottom = 20;
+        usersCons.gridx = 0;
+        usersCons.gridy = 1;
+        usersPanel.add(activeUserScrollPane, usersCons);
+
+        usersCons.insets.bottom = 5;
+        usersCons.gridx = 0;
+        usersCons.gridy = 2;
+        allUsersLabel.setForeground(Color.BLUE);
+        usersPanel.add(allUsersLabel, usersCons);
+
+        usersCons.gridx = 0;
+        usersCons.gridy = 3;
+        usersPanel.add(allUsersScrollPane, usersCons);
 
         return usersPanel;
     }
@@ -584,17 +731,6 @@ public class Main {
         c.gridx = 4;
         centerPanel.add(sendEmail, c);
 
-        //        emailField.addFocusListener(new FocusListener() {
-//            @Override
-//            public void focusGained(FocusEvent e) {
-//                emailField.setText("");
-//            }
-//
-//            @Override
-//            public void focusLost(FocusEvent e) {
-//                emailField.setText("Enter email");
-//            }
-//        })
 
         centerPanel.setPreferredSize(new Dimension(800, 40));
         return centerPanel;
@@ -799,6 +935,61 @@ public class Main {
         card.show(mainPanel, "accountPanel");
     }
 
+    private void switchToAdminPanel(){
+
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText().trim();
+
+        if( !username.equals("admin") && !password.equals("admin")){
+            signInErrorLabel.setText("You are not admin! Admin username: admin -- Admin pass: admin");
+            return;
+        }
+
+        admin = new Admin();
+        loadAdminResultsTable();
+        loadAllUsersTable();
+
+        //disable buttons
+        adminViewUserDeletedData.setEnabled(false);
+        reconstructUser.setEnabled(false);
+        adminViewUserData.setEnabled(false);
+        adminRecoverSelectedItem.setEnabled(false);
+        adminDeleteSelectedUser.setEnabled(false);
+        reconstructAll.setEnabled(false);
+
+        card.show(mainPanel, "adminPanel");
+    }
+
+    private void loadAdminResultsTable(){
+        ArrayList<User> users = admin.getActiveUsers();
+        if( users != null ){
+            adminUsersListModel.setRowCount(0);
+            for (User user : users) {
+                if (user != null) {
+                    Object[][] newRow = new Object[1][2];
+                    newRow[0][0] = user.getUserId();
+                    newRow[0][1] = user.getUserName();
+                    adminUsersListModel.addRow(newRow[0]);
+                }
+            }
+        }
+    }
+
+    private void loadAllUsersTable(){
+        ArrayList<User> users = admin.getAllRegisteredUsers();
+        if( users != null ){
+            adminAllUsersListTable.setRowCount(0);
+            for (User user : users) {
+                if (user != null) {
+                    Object[][] newRow = new Object[1][2];
+                    newRow[0][0] = user.getUserId();
+                    newRow[0][1] = user.getUserName();
+                    adminAllUsersListTable.addRow(newRow[0]);
+                }
+            }
+        }
+    }
+
     private void resetSearchFilters(){
 
         //reset components
@@ -916,6 +1107,18 @@ public class Main {
         }
     }
 
+    private void signOutAdmin(){
+        //in case the admin viewed all search history but did not recover
+        //we need to write that history back to file
+        admin.saveDeletedHistory();
+        switchToSignInPanel();
+        adminRecoverSelectedItem.setEnabled(false);
+        adminTableRowIndex = -1;
+        adminTblModel.setRowCount(0);
+        adminMsgLabel.setText(" ");
+        admin = null;
+    }
+
     private void setUpUser(User user){
         this.etsyUrlFormatter = new EtsyUrlFormatter();
         this.currentSession = new UserSession(user);
@@ -925,6 +1128,16 @@ public class Main {
         this.accUsrNmF.setText(user.getUserName());
         DefaultComboBoxModel model = (DefaultComboBoxModel)deleteList.getModel();
         model.addAll(currentSession.getSearchHistory().keySet());
+    }
+
+    private void deleteResultFromDeleteHistory(){
+        boolean wasDeleted = admin.restoreSelectedResult(adminTableRowIndex);
+        if( wasDeleted ){
+            adminTblModel.removeRow(adminTableRowIndex);
+            adminMsgLabel.setText("Recovered 1 item");
+        }
+        else
+            adminMsgLabel.setText("There is nothing to recover");
     }
 
     private void deleteResult(){
@@ -1017,7 +1230,7 @@ public class Main {
         }
 
         if( !this.currentSession.isGuestUser()){
-            currentSession.storeUserActivity();
+            currentSession.storeUserActivity(false);
         }
         passwordField.setText("");
         signUpPassField.setText("");
@@ -1058,7 +1271,7 @@ public class Main {
         String search = this.etsyUrlFormatter.getSearchQuery();
         ArrayList<Item> results = currentSession.search(search, this.etsyUrlFormatter.getFormatedUrl());
         if( results != null ){
-            loadTableRows(results);
+            loadResultsTableRows(results);
             msgField.setText(results.size() + " items downloaded");
             DefaultComboBoxModel model = (DefaultComboBoxModel)deleteList.getModel();
             if( model.getIndexOf(search) == -1 ){
@@ -1072,7 +1285,7 @@ public class Main {
         }
     }
 
-    private void loadTableRows(ArrayList<Item> results){
+    private void loadResultsTableRows(ArrayList<Item> results){
         if( results != null ) {
             resultsTblModel.setRowCount(0);
             for (Item item : results) {
@@ -1119,7 +1332,7 @@ public class Main {
     private void showEmailReport(){
         ArrayList<Item> emailList = currentSession.getEmailList();
         if( emailList != null && emailList.size() > 0 ){
-            loadTableRows(emailList);
+            loadResultsTableRows(emailList);
             msgField.setText(emailList.size() + " items");
         }
         else{
@@ -1157,17 +1370,17 @@ public class Main {
 
     private void sortByPrice(String sortOrder){
         this.currentSession.sortByPrice(sortOrder);
-        loadTableRows(this.currentSession.getSearches().get(this.currentSession.getCurrentSearch()));
+        loadResultsTableRows(this.currentSession.getSearches().get(this.currentSession.getCurrentSearch()));
     }
 
     private void sortByDateASC(){
         this.currentSession.sortByDateASC();
-        loadTableRows(this.currentSession.getSearches().get(this.currentSession.getCurrentSearch()));
+        loadResultsTableRows(this.currentSession.getSearches().get(this.currentSession.getCurrentSearch()));
     }
 
     private void sortByDateDESC(){
         this.currentSession.sortByDateDESC();
-        loadTableRows(this.currentSession.getSearches().get(this.currentSession.getCurrentSearch()));
+        loadResultsTableRows(this.currentSession.getSearches().get(this.currentSession.getCurrentSearch()));
     }
 
     private String getMinPrice(){
@@ -1191,6 +1404,115 @@ public class Main {
         }
     }
 
+    private void loadAllDeletedSearches(){
+        ArrayList<Item> deletedItems = admin.getAllDeletedHistory();
+        if( deletedItems != null && !deletedItems.isEmpty() ){
+            adminTblModel.setRowCount(0);
+            for( Item item : deletedItems ){
+                Object[][] newRow = new Object[1][5];
+                newRow[0][0] = item.getUserId().equals("1") ? "guest" : item.getUserId();
+                newRow[0][1] = item.getDescription();
+                newRow[0][2] = item.getCategory();
+                newRow[0][3] = "$ " + item.getPrice();
+                newRow[0][4] = item.getTimeStamp();
+                adminTblModel.addRow(newRow[0]);
+            }
+            //disable buttons
+            adminRecoverSelectedItem.setEnabled(true);
+            reconstructAll.setEnabled(true);
+            adminMsgLabel.setText("Viewing " + deletedItems.size() + " items deleted by all users");
+        }
+        else
+            adminMsgLabel.setText("Load data first or there is no deleted data by users");
+
+    }
+
+    private void reconstructAllUsersData(){
+        if( admin.getDeletedData() == null ){
+            adminMsgLabel.setText("Load data first or there is no deleted data by users");
+            return;
+        }
+
+        //disable buttons
+        adminViewUserData.setEnabled(false);
+        adminRecoverSelectedItem.setEnabled(false);
+        adminViewUserDeletedData.setEnabled(false);
+        adminMsgLabel.setText("Recovered " + admin.getDeletedData().size() + " items");
+
+        //get the data
+        admin.restoreAllDeletedHistory();
+        adminTblModel.setRowCount(0);
+        adminRecoverSelectedItem.setEnabled(false);
+    }
+
+    private void viewSelectedUserSavedData(){
+
+            ArrayList<Item> items = admin.getSelectedUserData(selectedUserId);
+            if( items != null && !items.isEmpty()){
+                adminTblModel.setRowCount(0);
+                for (Item item : items) {
+                    if (item != null) {
+                        Object[][] newRow = new Object[1][5];
+                        newRow[0][0] = item.getUserId();
+                        newRow[0][1] = item.getDescription();
+                        newRow[0][2] = item.getCategory();
+                        newRow[0][3] = "$ " + item.getPrice();
+                        newRow[0][4] = item.getTimeStamp();
+                        adminTblModel.addRow(newRow[0]);
+                    }
+                }
+                adminMsgLabel.setText("Viewing " + items.size() + " items: saved user data, only the user can delete");
+            }
+            else
+                adminMsgLabel.setText("Load data first or this user does not have any data saved");
+    }
+
+    private void getUserDeletedDataById(){
+        if( !selectedUserId.isEmpty() ) {
+            admin.loadUserDeletedDataById(selectedUserId);
+            ArrayList<Item> results = admin.getDeletedData();
+            if( results != null && !results.isEmpty() ){
+                adminTblModel.setRowCount(0);
+                for (Item item : results) {
+                    if (item != null) {
+                        Object[][] newRow = new Object[1][5];
+                        newRow[0][0] = item.getUserId();
+                        newRow[0][1] = item.getDescription();
+                        newRow[0][2] = item.getCategory();
+                        newRow[0][3] = "$ " + item.getPrice();
+                        newRow[0][4] = item.getTimeStamp();
+                        adminTblModel.addRow(newRow[0]);
+                    }
+                }
+                reconstructUser.setEnabled(true);
+                adminMsgLabel.setText("Viewing " + results.size() + " items");
+            }
+        }
+    }
+
+    private void reconstructSelectedUserData(){
+        if( !selectedUserId.isEmpty() ){
+            admin.recoverSelectedUserDeletedData(selectedUserId);
+            reconstructUser.setEnabled(false);
+            reconstructUser.setText("Recovered deleted data");
+            adminTblModel.setRowCount(0);
+            adminMsgLabel.setText("Recovered 1 items");
+        }
+        else
+            adminMsgLabel.setText("Load data first or there is no deleted data by this user");
+    }
+
+    private void deleteSelectedUser(){
+        if( !selectedUserId.isEmpty() ){
+            DBDriver.deleteUserByUserId(selectedUserId);
+            adminAllUsersListTable.removeRow(adminTableRowIndex);
+
+            adminMsgLabel.setText("Account deleted (` -`)");
+        }
+
+        else
+            adminMsgLabel.setText("could not delete user " );
+    }
 
     //main
     public static void main(String[] args) {
@@ -1242,7 +1564,7 @@ public class Main {
                 else if( event.getItem().equals("All searches")){
                     ArrayList<Item> savedSearches =currentSession.getAllSearches();
                     if( savedSearches != null ){
-                        loadTableRows(savedSearches);
+                        loadResultsTableRows(savedSearches);
                         msgField.setText("Viewing all " + savedSearches.size() + " searches");
                     }
                     else{
@@ -1254,7 +1576,7 @@ public class Main {
                     results = currentSession.search(search.toString(), currentSession.getSearchHistory().get(search.toString()));
 
                     if (results != null) {
-                        loadTableRows(results);
+                        loadResultsTableRows(results);
                         msgField.setText(results.size() + " items");
                     } else {
                         msgField.setText("Error reading history. Might be corrupted or file was deleted");

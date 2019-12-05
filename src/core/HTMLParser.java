@@ -8,10 +8,13 @@ import java.util.*;
 /**
  * This class parses a properly formatted html file.
  * The html file is read character by character as a stream by using the Core.FileInput class.
- * As the file is read, the parser extracts tags, tags' attributes and inner html.
+ * As the file is read, the parser extracts tags, tags's attributes and inner html.
  * Every time a new tag is extracted, it is added to a tree which in the end,
  * represents all the html read in tree form.
  * This tree is easily traversed to get all the items. Each item has a description, category and prize.
+ *
+ * Tags, tags' attributes and inner html are extracted by using a DFA technique. Each state is simulated by if statements
+ * to redirect program flow according to data being read
  *
  * @author Nelson Zeas
  */
@@ -38,7 +41,7 @@ public class HMTLParser {
     private int charCode;
 
     /**
-     * Set to ignore specific tags
+     * Set to ignore specific tags, ignored tags are not added to the tree
      */
     private Set<String> ignoredTags;
 
@@ -65,7 +68,7 @@ public class HMTLParser {
      *  - <img />
      *  - <img >
      *  Results received from Etsy use both ways and is more difficult to detect if a tag is void or not.
-     *  All these void tags are added to a map, to easily detect if it is a void tag.
+     *  All these void tags are added to a map, to easily detect if it is a void tag, there aren't too many.
      */
     private void initVoidTags(){
         voidTags = new HashSet<>();
@@ -108,12 +111,12 @@ public class HMTLParser {
 
 
     /**
-     * Built the tree.
+     * Build the tree.
      */
     public void parse(){
-        //Parent contains a reference to the last added tag
         //newNode saves the new tag to be added to the tree
         TagNode newNode, parent;
+        //Parent contains a reference to the last added tag
         root = parent = null;
 
         while ( charCode != -1 ){
@@ -151,7 +154,7 @@ public class HMTLParser {
 
     /**
      * Get the next node from the tree
-     * @return A Core.TagNode with tag name and attributes if any
+     * @return A TagNode with tag name and attributes if any
      */
     public TagNode getNextNode(){
         TagNode node = null;
@@ -203,7 +206,7 @@ public class HMTLParser {
      * <[tagName] [attributes]>.
      * To extract an opening tag name, read chars or letters until ' ' space if found or > is found
      * If space if found, tag has attributes. If > is found, tag does not have attributes
-     * @return TagNde with the tag name and attributes if any
+     * @return TagNode with the tag name and attributes if any
      */
     private TagNode getOpeningTag(){
         tagName = "";
@@ -224,7 +227,7 @@ public class HMTLParser {
             newTagNode.setOpeningTag(true);
 
             //if there is no '>' after tag name, then those are attributes
-            //always extract tag id or class name and the source url for images
+            //always extract tag class name and the source url for images
             //tag ids have higher priority thant class names.
             // That is, if an id is found first, the class name is ignored.
             //Saving these attributes is useful to search for the data, and to download images later
@@ -378,6 +381,7 @@ public class HMTLParser {
         String att = null;
         while ( charCode != -1 && charCode != '>' ){
             if( att == null ) {
+                //disable extracting id, not necessary
 //                if (charCode == 'i') {
 //                    att = getTagId();
 //                }
@@ -455,7 +459,7 @@ public class HMTLParser {
 
 
     /**
-     * Helper method to print tree in html form, that is:
+     * HELPER method to print tree in html form, that is:
      * html
      *      head
      *          title
@@ -469,7 +473,7 @@ public class HMTLParser {
 
 
     /**
-     * Helper method to print tree in html form, that is:
+     * method to print tree in html form, that is:
      * html
      *      head
      *          title
@@ -502,7 +506,7 @@ public class HMTLParser {
 
     /**
      * All the data that needs to be extracted is inside an
-     * un (unordered list) with class name "responsive-listing-grid"
+     * ul (unordered list) with class name "responsive-listing-grid"
      * This unordered list has 64 children tags, which are individual results that will be extracted
      * The tree is traversed by Breadth First Search
      * @return A unordered list Core.TagNode
@@ -551,7 +555,7 @@ public class HMTLParser {
     *  Each li tag contains multiple children, and each tag needs to be searched
     *  to extract the img src, description, category and price.
      * @param liTag li tag to be searched
-     * @return an Core.Item obj with the img src, description, category and price or null if not found
+     * @return a Core.Item obj with the img src, description, category and price or null if not found
      */
         public Item getItem(TagNode liTag){
             if( root == null )
@@ -569,6 +573,7 @@ public class HMTLParser {
         while( !q.isEmpty() ){
             int n = q.size();
             while( n > 0 ){
+                //Stop searching when al the necessary info has been found
                 if( foundCat && foundD && foundP && foundScr ){
                     //also insert a timestamp to know its create date and time
                     String timeStamp = new Timestamp(System.currentTimeMillis()).toString();
@@ -603,12 +608,5 @@ public class HMTLParser {
         return null;
     }
 
-
-    public static void main(String[] args) {
-        HMTLParser parser = new HMTLParser("appdata/cache/results.html");
-        parser.parse();
-        parser.printTreeIndented();
-        parser.getAllItems();
-    }
 
 }
