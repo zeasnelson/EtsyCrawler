@@ -10,10 +10,19 @@ import java.io.*;
 public class FileOutput{
 
 
+    /**
+     * Global static final variables to where log files are stored with the application
+     */
     public final static String DATA_LOG= "appdata/log/datalog.txt";
-    public final static String ACTIVITY_LOG= "appdata/log/activitylog";
+    public final static String ACTIVITY_LOG= "appdata/log/activitylog.txt";
+
+    /**
+     * Operations for logged data
+     */
     public final static String INSERT = "INSERT";
     public final static String DELETE = "DELETE";
+
+
 
     /**
      * Name of the file to open
@@ -63,6 +72,45 @@ public class FileOutput{
         this.append = false;
     }
 
+
+    /**
+     * Check if privided directory exists, if it does not attempts to create it
+     * @param parentDir The parent dir where the subfolder will be created
+     * @param subFolder The child folder of the parent dir
+     * @return true if folder was created or already existed, false otherwise
+     */
+    public static Boolean createDir(String parentDir, String subFolder){
+        File parent = new File(parentDir);
+        if( parent.exists() ){
+            File subDir = new File(parent, subFolder);
+            if( !subDir.exists() ){
+                return subDir.mkdir();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create a file as a child of @parentDir
+     * @param parentDir The parent dir where the child file will be created
+     * @param fileName The file name that will be created as a child of parent dir
+     * @return true if file was created or already existed, false otherwise
+     */
+    public static Boolean createFile(String parentDir, String fileName){
+        File parent = new File(parentDir);
+        if( parent.exists() ){
+            File subDir = new File(parent, fileName);
+            if( !subDir.exists() ){
+                try {
+                    return subDir.createNewFile();
+                } catch (IOException e) {
+                    return false;
+                }
+
+            }
+        }
+        return false;
+    }
 
     /**
      * @return Output File name

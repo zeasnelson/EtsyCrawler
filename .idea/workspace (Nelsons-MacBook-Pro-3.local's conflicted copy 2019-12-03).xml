@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="186480a2-6f7e-4b1c-bd76-300f9125da01" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/appdata/cache/flags.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/log/backup.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/101/absolutelyEverythingFromAllTime.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/101/bike.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/101/car.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/101/house.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/101/iron%20man.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/101/recoveredData.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/101/searchKey.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/201/doors.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/201/recoveredData.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/201/searchKey.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2601/searchKey.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2601/shirt.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/absolutelyEverythingFromAllTime.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/backpack.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/cars%20mc%20queen.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/cars.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/case%20for%20galaxy%20Samsung%2010%20plus.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/case%20for%20samsung%2010%20plus.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/chair%20for%20babys.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/cloth%20for%20babys%20girl.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/cloth%20for%20babys%20gril.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/recoveredData.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/appdata/usersdata/2701/searchKey.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/searchQueries.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/manager/Admin.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/manager/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appdata/cache/results.html" beforeDir="false" afterPath="$PROJECT_DIR$/appdata/cache/results.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appdata/log/activitylog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/appdata/log/activitylog.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appdata/log/datalog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/appdata/log/datalog.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appdata/usersdata/1/activitylog.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/appdata/usersdata/1/datalog.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/appdata/usersdata/2/activitylog.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/appdata/usersdata/2/datalog.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/appdata/usersdata/imgIds.txt" beforeDir="false" afterPath="$PROJECT_DIR$/appdata/usersdata/imgIds.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cs370db/db.lck" beforeDir="false" afterPath="$PROJECT_DIR$/cs370db/db.lck" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cs370db/log/log.ctrl" beforeDir="false" afterPath="$PROJECT_DIR$/cs370db/log/log.ctrl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cs370db/log/log1.dat" beforeDir="false" afterPath="$PROJECT_DIR$/cs370db/log/log1.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cs370db/log/logmirror.ctrl" beforeDir="false" afterPath="$PROJECT_DIR$/cs370db/log/logmirror.ctrl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cs370db/seg0/c400.dat" beforeDir="false" afterPath="$PROJECT_DIR$/cs370db/seg0/c400.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cs370db/seg0/c490.dat" beforeDir="false" afterPath="$PROJECT_DIR$/cs370db/seg0/c490.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cs370db/seg0/c4a1.dat" beforeDir="false" afterPath="$PROJECT_DIR$/cs370db/seg0/c4a1.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/derby.log" beforeDir="false" afterPath="$PROJECT_DIR$/derby.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/DBDriver.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/DBDriver.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/DownloadURLImage.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/DownloadURLImage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/Email.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/Email.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/EtsyUrlFormatter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/EtsyUrlFormatter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/FileInput.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/FileInput.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/FileOutput.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/FileOutput.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/HMTLParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/HMTLParser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/Item.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/Item.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/core/WebpageReaderWithAgent.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/core/WebpageReaderWithAgent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$CustomizeBoxListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$EmailFieldFocusListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$GiftCardItemListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$GiftWrapListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$HistoryItemSelectedListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$ItemTypeListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$MaxPriceFocusListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$MinPriceFocusListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$SearchByCategoryItemListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$SearchFieldFocusListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$SetColorItemListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$SetOfferItemListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$ShipToItemListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main$SortItemListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/gui/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/EtsyCrawler/manager/UserSession.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/EtsyCrawler/manager/UserSession.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/Admin.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/DBDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/DBDriver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/DownloadURLImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/DownloadURLImage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/Email.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/Email.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/EtsyUrlFormatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EtsyUrlFormatter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/FileInput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/FileInput.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/FileOutput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/FileOutput.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/HMTLParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/HMTLParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/Item.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/WebpageReaderWithAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/WebpageReaderWithAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gui/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/GUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/manager/UserSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/manager/UserSession.java" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="C:\Users\Nelson Zeas\Dropbox\Java\IntelliJ\Project1\.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1ScMo1qCdVgQfeOi8c7ea4V8Po8" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="TODO_SCOPE" value="All Places" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Nelson Zeas\Dropbox\Java\IntelliJ\Project1\appdata\usersdata\101" />
+      <recent name="C:\Users\Nelson Zeas\Dropbox\Java\IntelliJ\Project1\appdata" />
+      <recent name="$PROJECT_DIR$/log" />
+      <recent name="C:\Users\Nelson Zeas\Dropbox\Java\IntelliJ\Project1\lib" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Nelson Zeas\Dropbox\Java\IntelliJ\Project1" />
+      <recent name="$PROJECT_DIR$/appdata/usersdata/401" />
+      <recent name="C:\Users\Nelson Zeas\Dropbox\Java\IntelliJ\Project1\appdata\log" />
+      <recent name="$PROJECT_DIR$/appdata/usersdata" />
+      <recent name="$PROJECT_DIR$/appdata/usersdata/1fsdf" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.App">
+    <configuration name="Admin" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="manager.Admin" />
+      <module name="EtsyCrawler" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="manager.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="manager.App" />
+      <module name="EtsyCrawler" />
+      <option name="PROGRAM_PARAMETERS" value="-i searchQueries.txt -o output.txt -p null yes" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="manager.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DBDriver" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="core.DBDriver" />
+      <module name="EtsyCrawler" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="gui.Main" />
+      <module name="EtsyCrawler" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserSession" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="manager.UserSession" />
+      <module name="EtsyCrawler" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Main" />
+      <item itemvalue="Application.DBDriver" />
+      <item itemvalue="Application.UserSession" />
+      <item itemvalue="Application.Admin" />
+      <item itemvalue="Application.App" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.App" />
+        <item itemvalue="Application.Main" />
+        <item itemvalue="Application.Admin" />
+        <item itemvalue="Application.DBDriver" />
+        <item itemvalue="Application.UserSession" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="186480a2-6f7e-4b1c-bd76-300f9125da01" name="Default Changelist" comment="" />
+      <created>1571858601736</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1571858601736</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Added admin panel">
+      <created>1574109016402</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1574109016402</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/nzeas-history" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/nzeas-history" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Added admin panel" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added admin panel" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/manager/UserSession.java</url>
+          <line>393</line>
+          <properties class="manager.UserSession">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/manager/Admin.java</url>
+          <line>203</line>
+          <properties class="manager.Admin">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/manager/Admin.java</url>
+          <line>393</line>
+          <properties class="manager.Admin">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/manager/Admin.java</url>
+          <line>114</line>
+          <properties class="manager.Admin">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

@@ -4,10 +4,15 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 
+/**
+ * Class to read web pages from a provided url
+ * The user agent for the latest google chrome on Windows is used
+ * Files are not modified and are directly stored locally
+ */
 public class WebpageReaderWithAgent {
 
     /**
-     * To create to files, saves html received from url
+     * File writer, saves html received from url
      */
     private FileOutput fileWriter;
 
@@ -33,6 +38,11 @@ public class WebpageReaderWithAgent {
     }
 
 
+    /**
+     * Method provided in class by professor
+     * @param sURL The user from which the web page will be downloaded
+     * @return a connection object
+     */
     public InputStream getURLInputStream(String sURL)  {
         try {
             URLConnection oConnection = (new URL(sURL)).openConnection();
@@ -43,6 +53,12 @@ public class WebpageReaderWithAgent {
         }
      } // getURLInputStream
 
+    /**
+     * Read the data from the provided url
+     * Method provided in class by professor
+     * @param url The user from which the web page will be downloaded
+     * @return A BufferReader with input stream initialized
+     */
     public  BufferedReader read(String url) {
         try {
             InputStream content = getURLInputStream(url);
@@ -58,6 +74,7 @@ public class WebpageReaderWithAgent {
 
     /**
      * Reads lines from the the input stream and writes results to a html file
+     * Method provided in class by professor
      */
     public boolean writeToFile(){
         try {
@@ -72,7 +89,8 @@ public class WebpageReaderWithAgent {
                 line = reader.readLine();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Error while downloading file");
             return false;
         }
         return true;
@@ -85,13 +103,4 @@ public class WebpageReaderWithAgent {
         fileWriter.close();
     }//close
 
-//   public static void main (String[] args){
-//        String searchQuery = "banana";
-//        String outFileName = "results.html";
-//        WebpageReaderWithAgent htmlReader = new WebpageReaderWithAgent(searchQuery, outFileName);
-//        htmlReader.writeToFile();
-//        htmlReader.close();
-//
-//
-//   } // main
 } // Core.WebpageReaderWithAgent

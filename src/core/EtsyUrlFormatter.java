@@ -2,7 +2,8 @@ package core;
 
 
 /**
- * This class is used to format the link when different search filters re applied by the user
+ * This class is used to format the link when different search filters are applied by the user.
+ * It is specifically designed for Etsy.com
  */
 
 public class EtsyUrlFormatter {
@@ -63,11 +64,6 @@ public class EtsyUrlFormatter {
     private String priceMax;
 
     /**
-     * url stores a already formatted url
-     */
-    private String formattedUrl;
-
-    /**
      * init all fields
      */
     public EtsyUrlFormatter(){
@@ -112,10 +108,6 @@ public class EtsyUrlFormatter {
 
 
     //Getters and setters for all fields
-
-    public String getFormattedUrl() {
-        return formattedUrl;
-    }
 
     public String getSearchQuery() {
         return searchQuery;
@@ -167,10 +159,8 @@ public class EtsyUrlFormatter {
 
     public void setSearchQuery(String searchQuery) {
         String trim = searchQuery.trim();
+        //search queries that have spaces must be separated by %20, Etsy url format rule
         this.searchQuery = trim.replaceAll(" ", "%20");
     }
 
-    public void setFormattedUrl(String formattedUrl) {
-        this.formattedUrl = formattedUrl;
-    }
 }

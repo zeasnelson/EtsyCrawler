@@ -1,2 +1,7 @@
 get historyItems
 search house 71 items
+sort ASC
+sort DESC
+get emailReport 0 items
+admin savedDeletedHistory 0items
+admin savedDeletedHistory 0items

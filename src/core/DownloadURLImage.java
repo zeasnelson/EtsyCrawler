@@ -3,10 +3,27 @@ package core;
 import java.io.*;
 import java.net.URL;
 
+/**
+ * A class  to download images from a provided url
+ * It downloads a stores images at the specified location
+ *
+ * NOTE: This is not the code provided in class
+ *
+ * @Author Nelson Zeas
+ * @Date 11/20/2019
+ */
 public class DownloadURLImage {
 
+
+	/**
+	 * Donwload an image from a given url
+	 * @param imgUrl The image url from which to download the image
+	 * @param destinationFile The location, including the image name and format, where image will be saved to
+	 * @return true if image was downloaded, false otherwise
+	 */
 	public static Boolean downloadImage(String imgUrl, String destinationFile) {
 		try {
+			//create the url
 			URL url = new URL(imgUrl);
 			InputStream is = url.openStream();
 			OutputStream os = new FileOutputStream(destinationFile);
@@ -14,6 +31,7 @@ public class DownloadURLImage {
 			byte[] b = new byte[2048];
 			int length;
 
+			//read the image
 			while ((length = is.read(b)) != -1) {
 				os.write(b, 0, length);
 			}
@@ -26,12 +44,5 @@ public class DownloadURLImage {
 		return true;
 	}
 
-//	public static void main(String[] args) throws Exception {
-//		String imageUrl = "https://i.etsystatic.com/8328926/d/il/a72f4b/477683526/il_340x270.477683526_qh7t.jpg?version=0";
-//		String destinationFile = "image.jpg";
-//
-//		saveImage(imageUrl, destinationFile);
-//	}
 
-
-} // Core.GetURLImage
+} // Core.DownloadUrlImage

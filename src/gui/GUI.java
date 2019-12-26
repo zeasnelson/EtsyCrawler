@@ -17,21 +17,60 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
 
-public class Main {
 
+/**
+ * The main user interface to display all extracted data from Etsy.com
+ * The GUI is made of 3 main components:
+ *      - Sign In panel
+ *          -presented to all users upon GUI start up
+ *
+ *      - Admin panel
+ *          - Restore searched data from logged file
+ *          - view user's data
+ *          - delete user's accounts
+ *
+ *      - Results panel
+ *          - search on Etsy
+ *          - search by filters
+ *          - sort by price, category
+ *          - create and send email report
+ *          - delete individual searched and entire searches
+ *          - Account Panel
+ *              - ability to change password
+ */
+public class GUI {
+
+    /**
+     * Main JFrame where all components will be rendered
+     */
     private JFrame mainFrame;
 
+    /**
+     * CardLayout which enables the ability to switch between different panels in the GUI
+     * Switch between SignIn panel, Admin Panel, AccountPanel
+     */
     private CardLayout card;
 
+    //All text fields
+    //account user name
     private JTextField accUsrNmF;
+    //to type search query
     private JTextField searchField;
+    //to type email to send report to
     private JTextField emailField;
+    //username text box at sign in panel
     private JTextField usernameField;
+    //password text box at sign in panel
     private JTextField passwordField;
+    //sign up password text box at sign in panel
     private JTextField signUpPassField;
+    //sign up username text box at sign in panel
     private JTextField signUpUserNameField;
+    //text box for minimum price to specify filter
     private JTextField minPrice;
+    //text box for max price to specify filter
     private JTextField maxPrice;
+    //text box to type new password at account panel
     private JTextField accNewPassField;
     
     //Search filters components
@@ -43,55 +82,84 @@ public class Main {
     private JCheckBox customizable ;
     private JCheckBox giftWrap     ;
     private JCheckBox giftCards    ;
-    private JComboBox sort;
     private JComboBox deleteList;
-    private JComboBox usersList;
 
 
-    private JLabel usrNameLabel;
+    //to show errors or messages in the user panel
     private JLabel accountMsgLabel;
+    //to show errors or messages in the user panel
     private JLabel msgField;
+    //to show images for specific results
     private JLabel resLabel;
+    //to show errors in the sign in panel
     private JLabel signInErrorLabel;
     private JLabel adminMsgLabel;
 
 
+    //Jpanels for main components
     private JPanel  mainPanel;
     private JPanel singInPanel;
     private JPanel resultsPanel;
     private JPanel accountPanel;
-    private JPanel searchFilters;
     private JPanel adminPanel;
 
+    //tabels to store data in diferent components of the GUI
+    //To data downloaded from etsy
     private DefaultTableModel resultsTblModel;
+    //To show data from log files in the admin panel
     private DefaultTableModel adminTblModel;
+    //To show all users that have search history in the admin panel
     private DefaultTableModel adminUsersListModel;
+    //To show all registered users in the admin panel
     private DefaultTableModel adminAllUsersListTable;
 
+    //To show all extracted items
+    private JTable resultsTable;
+    //To show all users that have search history
+    private JTable usersListTable;
+    //to show all registered users
+    private JTable allUsersTable;
+
+    //To display images from results
     private ImageIcon resImage;
 
-    private JButton reset;
+    //restore all deleted data for a specific user
     private JButton reconstructUser;
+    //to view data from a specific user
     private JButton adminViewUserData;
+    //to recover a selected item in the table for a specific user
     private JButton adminRecoverSelectedItem;
+    //To delete a user's account
     private JButton adminDeleteSelectedUser;
+    //To view the data deleted by a specific user
     private JButton adminViewUserDeletedData;
+    //reconstruct all data deleted by all users
     private JButton reconstructAll;
 
 
+    //To store the index of the current selected row users panel table
     private int currentRow;
+    //To store teh index of the current select row in teh admin panel table
     private int adminTableRowIndex;
+    //To store the id of the user in a selected row in the admins panel table
     private String selectedUserId;
+    //To manage the session of the user currently logged in
     private UserSession currentSession;
+    //to manage data when logged in as admin
     private Admin admin;
+    //To format the Etsy url when different filters are applied
     private EtsyUrlFormatter etsyUrlFormatter;
 
 
-    public Main() {
+    /**
+     * Crate the main JFRAME
+     */
+    public GUI() {
         mainFrame = new JFrame();
         renderMainFrame();
     }
 
+    //initialize the main JFrame
     private void renderMainFrame(){
         msgField = new JLabel(" ");
         mainFrame.setTitle("Etsy Crawler");
@@ -105,6 +173,13 @@ public class Main {
         mainFrame.setVisible(true);
     }
 
+    /**
+     * Render all different components
+     *  - SignInPanel
+     *  - ResultsPanel
+     *  - AccountPanel
+     *  - AdminPanel
+     */
     private void renderMainPanel(){
         mainPanel = new JPanel();
         card      = new CardLayout();
@@ -125,6 +200,9 @@ public class Main {
         mainFrame.add(mainPanel);
     }
 
+    /**
+     * render teh signInPanel
+     */
     private void createSignInPanel(){
         singInPanel              = new JPanel();
         signInErrorLabel         = new JLabel();
@@ -146,6 +224,7 @@ public class Main {
         JLabel     passRuleLabel    = new JLabel("Only letters or numbers, no spaces or symbols");
         JButton    signUpBtn        = new JButton("Sign Up");
 
+        //Action listeners, button clicks
         signInBtn.addActionListener(e -> signIn() );
         signUpBtn.addActionListener(e -> signUp());
         signInAsGuest.addActionListener( e -> signInUserAsGuest() );
@@ -157,7 +236,7 @@ public class Main {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.ipadx = 4;
         constraints.ipady = 4;
-        constraints.insets = constraints.insets = new Insets(0,10,0,0);
+        constraints.insets = new Insets(0,10,0,0);
         //Sign in section
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -275,6 +354,7 @@ public class Main {
         adminPanel.add(optsPanel, BorderLayout.EAST);
     }
 
+    //Render the all buttons used in the admins panel
     private JPanel createAdminButtons(){
         JPanel optsPanel               = new JPanel();
         JButton viewAllDeletedSearches = new JButton("View all deleted searches");
@@ -350,6 +430,10 @@ public class Main {
         return optsPanel;
     }
 
+    /**
+     * Create the admins panel
+     * @return JPanel
+     */
     private JPanel createAdminUsersTable(){
 
         String [] colNames = {"User id", "Description", "Category", "Price", "Date Created"};
@@ -365,6 +449,7 @@ public class Main {
         scrollpane.setMinimumSize(adminResTable.getPreferredSize());
         adminResTable.setRowHeight(30);
 
+        //Action listener for the table
         adminResTable.getSelectionModel().addListSelectionListener(e -> {
                 if( !e.getValueIsAdjusting() ){
                     if (adminResTable.getSelectedRow() > -1) {
@@ -374,7 +459,7 @@ public class Main {
             }
         );
 
-
+        //set prefered column size for the admin results table
         adminResTable.getColumnModel().getColumn(0).setPreferredWidth(2);
         adminResTable.getColumnModel().getColumn(1).setPreferredWidth(300);
         adminResTable.getColumnModel().getColumn(2).setPreferredWidth(5);
@@ -398,18 +483,22 @@ public class Main {
         return tablePanel;
     }
 
+    /**
+     * Render the admins Users tables
+     * @return JPanel
+     */
     private JPanel createUsersListPanel(){
         String [] users = {"user id", "user name"};
         JPanel usersPanel      = new JPanel();
         adminUsersListModel    = new DefaultTableModel(users, 0);
-        JTable usersListTable  = new JTable(adminUsersListModel);
+        usersListTable         = new JTable(adminUsersListModel);
         JScrollPane activeUserScrollPane = new JScrollPane(usersListTable);
 
         adminAllUsersListTable = new DefaultTableModel(users, 0);
-        JTable allUsersTable   = new JTable(adminAllUsersListTable);
+        allUsersTable          = new JTable(adminAllUsersListTable);
         JScrollPane allUsersScrollPane = new JScrollPane(allUsersTable);
-        usersList = new JComboBox();
 
+        //Listener for the table that shows users that have search history
         allUsersTable.getSelectionModel().addListSelectionListener(e -> {
                     if( !e.getValueIsAdjusting() ){
                         if (allUsersTable.getSelectedRow() > -1) {
@@ -434,6 +523,7 @@ public class Main {
         );
 
 
+        //Action listener for the table that shows all registered users
         usersListTable.getSelectionModel().addListSelectionListener(e -> {
                 if( !e.getValueIsAdjusting() ){
                     if (usersListTable.getSelectedRow() > -1) {
@@ -496,8 +586,13 @@ public class Main {
         return usersPanel;
     }
 
+    /**
+     * Create the search filter options panel
+     * @return JPanel
+     */
+    @SuppressWarnings("unchecked")
     private JPanel createSearchOptions(){
-        searchFilters      = new JPanel();
+        JPanel searchFilters = new JPanel();
         category = new JComboBox();
         offer    = new JComboBox();
         color    = new JComboBox();
@@ -507,7 +602,9 @@ public class Main {
         customizable = new JCheckBox("Customizable");
         giftWrap     = new JCheckBox("Can be gift-wrapped");
         giftCards    = new JCheckBox("Accepts Etsy gift cards");
-        reset        = new JButton("reset filters");
+        //buttons
+        //reset search filters
+        JButton reset = new JButton("reset filters");
         minPrice     = new JTextField("enter min price");
         maxPrice     = new JTextField("enter max price");
         Border blackLine = BorderFactory.createLineBorder(Color.black);
@@ -520,6 +617,7 @@ public class Main {
         minPrice.setPreferredSize(priceDim);
         maxPrice.setPreferredSize(priceDim);
 
+        //action listeners, button cliks
         category.addItemListener( new SearchByCategoryItemListener());
         offer.addItemListener( new SetOfferItemListener());
         color.addItemListener( new SetColorItemListener());
@@ -528,7 +626,7 @@ public class Main {
         customizable.addItemListener(new CustomizeBoxListener());
         giftWrap.addItemListener( new GiftWrapListener());
         giftCards.addItemListener( new GiftCardItemListener());
-        reset.addActionListener( e -> resetSearchFilters());
+        reset.addActionListener(e -> resetSearchFilters());
         minPrice.addFocusListener( new MinPriceFocusListener());
         maxPrice.addFocusListener( new MaxPriceFocusListener());
 
@@ -633,6 +731,7 @@ public class Main {
         return searchFilters;
     }
 
+    //Creates the search bar, account and log out button panel
     private JPanel createNorthPanel(){
         JPanel topPanel    = new JPanel();
         searchField        = new JTextField("Search on Etsy.com");
@@ -643,6 +742,7 @@ public class Main {
 
         topPanel.setLayout(new GridBagLayout());
 
+        //action listeners
         signOut.addActionListener(e -> logOutUser() );
         search.addActionListener( e -> getData(searchField));
         account.addActionListener( e -> switchToAccountPanel());
@@ -678,16 +778,17 @@ public class Main {
         return topPanel;
     }
 
+    //Create the panel to sort and send email report
+    @SuppressWarnings("unchecked")
     private JPanel createCenterPanel(){
         JPanel centerPanel  = new JPanel();
         deleteList          = new JComboBox();
         JButton sendEmail   = new JButton("send");
         emailField          = new JTextField("Enter email");
         JButton viewEmailReport = new JButton("Review email report");
-        sort                = new JComboBox();
-        JSeparator separator = new JSeparator(JSeparator.VERTICAL);
+        JComboBox sort          = new JComboBox();
 
-
+        //action listeners
         emailField.addFocusListener(new EmailFieldFocusListener());
         deleteList.addItemListener(new HistoryItemSelectedListener());
         sendEmail.addActionListener( e -> sendEmailTo());
@@ -736,13 +837,17 @@ public class Main {
         return centerPanel;
     }
 
+    /**
+     * Create the panel that display results downloaded from searches
+     * @return the panel
+     */
     private JPanel createSouthPanel(){
 
         String [] colNames = {"Description", "Category", "Price", "Date Created"};
 
         resultsTblModel        = new DefaultTableModel(colNames, 0);
         JPanel lowerPanel      = new JPanel();
-        JTable resultsTable    = new JTable(resultsTblModel);
+        resultsTable           = new JTable(resultsTblModel);
         JScrollPane scrollPane = new JScrollPane(resultsTable);
 
         resultsTable.getColumnModel().getColumn(0).setPreferredWidth(300);
@@ -833,12 +938,15 @@ public class Main {
         return lowerPanel;
     }
 
+    //Create the account panel
     private void createAccountPanel(){
         accountPanel        = new JPanel();
         JButton signOutBtn  = new JButton("Sign out");
         JButton backToResB  = new JButton("Go back to results");
         JLabel accountLabel = new JLabel("Account");
-        usrNameLabel        = new JLabel("username");
+        //labels to show messages
+        //to show the username at the user panel
+        JLabel usrNameLabel = new JLabel("username");
         accUsrNmF           = new JTextField();
         JLabel changePassL  = new JLabel("Change password");
         JLabel newPassL     = new JLabel("Enter new password");
@@ -916,17 +1024,26 @@ public class Main {
 
     }
 
+    /**
+     * allows to switch to the sign in panel
+     */
     private void switchToSignInPanel(){
         card.show(mainPanel, "signInPanel");
         mainFrame.validate();
         mainFrame.repaint();
     }
 
+    /**
+     * allows to switch to the user panel
+     */
     private void switchToResults(){
         card.show(mainPanel, "resultsPanel");
 
     }
 
+    /**
+     * allows to switch to the account panel
+     */
     private void switchToAccountPanel(){
         if( this.currentSession.isGuestUser() ){
             msgField.setText("Guests do not have accounts");
@@ -935,6 +1052,9 @@ public class Main {
         card.show(mainPanel, "accountPanel");
     }
 
+    /**
+     * Allows to switch to the admin panel
+     */
     private void switchToAdminPanel(){
 
         String username = usernameField.getText().trim();
@@ -960,8 +1080,13 @@ public class Main {
         card.show(mainPanel, "adminPanel");
     }
 
+    /**
+     * When switching to the admin's panel, load all users that have search history
+     */
     private void loadAdminResultsTable(){
+        //request data to admin object
         ArrayList<User> users = admin.getActiveUsers();
+        //fill table
         if( users != null ){
             adminUsersListModel.setRowCount(0);
             for (User user : users) {
@@ -975,8 +1100,13 @@ public class Main {
         }
     }
 
+    /**
+     * When switching to the admin's panel, load all users registered users
+     */
     private void loadAllUsersTable(){
+        //get all users
         ArrayList<User> users = admin.getAllRegisteredUsers();
+        //fill table
         if( users != null ){
             adminAllUsersListTable.setRowCount(0);
             for (User user : users) {
@@ -990,6 +1120,9 @@ public class Main {
         }
     }
 
+    /**
+     * Reset all search filters
+     */
     private void resetSearchFilters(){
 
         //reset components
@@ -1008,10 +1141,17 @@ public class Main {
         etsyUrlFormatter = new EtsyUrlFormatter();
     }
 
+    /**
+     * change user password
+     * @param text JTextfield with the new password
+     */
     private void changeUserPassword(JTextField text){
+        //get the password
         String newPassword = text.getText().trim();
+        //validate password
         boolean isValidPass = validatePassword(newPassword);
         if( isValidPass ){
+            //query database to updata password
             int didChange = this.currentSession.getUser().changePassword(newPassword);
             if( didChange == 1 ){
                 accountMsgLabel.setText("Password changed!");
@@ -1027,12 +1167,18 @@ public class Main {
             accountMsgLabel.setText("Invalid password");
     }
 
+    /**
+     * to show the picture of a specific result
+     * @param row index of selected row
+     */
     private void showItemPicture(int row){
+        //don't load pictures if the user is viewing the email report
         if( this.currentSession.isViewingEmailReport() ){
             msgField.setText(" ");
             return;
         }
         msgField.setText("Downloading image for selected item");
+        //download and get the downloaded image id
         String imgId = currentSession.downloadItemImg(row);
 
         String dir;
@@ -1051,6 +1197,11 @@ public class Main {
         resLabel.setIcon(resImage);
     }
 
+    /**
+     * Create a UserSeasion as a guest
+     * The db has a default user id of 1 in the db
+     * data by the guest is not stored but logged
+     */
     private void signInUserAsGuest(){
         User guest = new User("1", "guest", "guest");
         this.currentSession = new UserSession(guest);
@@ -1059,20 +1210,28 @@ public class Main {
         switchToResults();
     }
 
+    /**
+     * To enable user registration
+     */
     private void signUp(){
+        //get password and username entered by user
         String userName = signUpUserNameField.getText().trim();
         String password = signUpPassField.getText().trim();
+        //validate password and username
         Boolean userNm = validateUserName(userName);
         Boolean pass   = validatePassword(password);
 
         if( userNm && pass ){
+            //check if the user already exists in the db
             if( DBDriver.userExists(signUpUserNameField.getText().trim()) ){
                 signInErrorLabel.setText("User name already taken");
             }
             else{
+                //add user to the db
                 Boolean wasAdded = DBDriver.addNewUser(userName, password);
-                if ( wasAdded ){
+                if ( wasAdded != null &&  wasAdded ){
                     User user = DBDriver.userExists(userName, password);
+                    //sign in user
                     setUpUser(user);
                     switchToResults();
                 }
@@ -1085,15 +1244,20 @@ public class Main {
             if( !pass ){
                 signInErrorLabel.setText("Invalid password!");
             }
-            else if( !userNm )
+            else
                 signInErrorLabel.setText("Invalid username!");
         }
     }
 
+    /**
+     * Enable user to sign in
+     */
     private void signIn(){
 
+        //get username and password entered
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
+        //check if user exists in db
         User user = DBDriver.userExists(username, password);
         if( username.isEmpty() || password.isEmpty() ){
             signInErrorLabel.setText("Enter a username");
@@ -1107,6 +1271,9 @@ public class Main {
         }
     }
 
+    /**
+     * enable admin to sign out
+     */
     private void signOutAdmin(){
         //in case the admin viewed all search history but did not recover
         //we need to write that history back to file
@@ -1119,6 +1286,11 @@ public class Main {
         admin = null;
     }
 
+    /**
+     * Set default values for new user sessions
+     * @param user A User object, must have user Id
+     */
+    @SuppressWarnings("unchecked")
     private void setUpUser(User user){
         this.etsyUrlFormatter = new EtsyUrlFormatter();
         this.currentSession = new UserSession(user);
@@ -1130,6 +1302,9 @@ public class Main {
         model.addAll(currentSession.getSearchHistory().keySet());
     }
 
+    /**
+     * Enable the admin to restore a specific result that was deleted by the user
+     */
     private void deleteResultFromDeleteHistory(){
         boolean wasDeleted = admin.restoreSelectedResult(adminTableRowIndex);
         if( wasDeleted ){
@@ -1140,25 +1315,42 @@ public class Main {
             adminMsgLabel.setText("There is nothing to recover");
     }
 
+    /**
+     * Enable user to delete a selected result in the table
+     */
     private void deleteResult(){
+        //delete from email report
         if( this.currentSession.isViewingEmailReport() ){
             this.currentSession.deleteItemFromEmailReport(currentRow);
             resultsTblModel.removeRow(currentRow);
         }
         else {
+            //delete from searched data
             Boolean removed = currentSession.deleteSingleResult(currentRow);
             if( removed ){
                 resultsTblModel.removeRow(currentRow);
+                resultsTable.getSelectionModel().clearSelection();
                 msgField.setText(currentSession.getSearches().get(currentSession.getCurrentSearch()).size() + " items");
+                String  dir = "appdata/images/etsy.png";
+                resImage = new ImageIcon(dir);
+                resLabel.setIcon(resImage);
             }
         }
     }
 
+    /**
+     * Allow user to delete all results by search under a specific search
+     * ex. user serached for car and received 50 items.
+     * This delete all 50 items
+     */
+    @SuppressWarnings("unchecked")
     private void deleteCurrentSearch(){
+        //don't allow when the user is viewing the email report
         if( this.currentSession.isViewingEmailReport()){
             msgField.setText("Searches cannot be deleted while viewing email report");
         }
         else{
+            //delete
             boolean deleted = currentSession.deleteCurrentSearch();
             if( deleted ) {
                 resultsTblModel.setRowCount(0);
@@ -1178,6 +1370,9 @@ public class Main {
         }
     }
 
+    /**
+     * allow the user to delete the email report
+     */
     private void deleteEmailReport(){
         if( this.currentSession.isViewingEmailReport() ) {
             this.currentSession.deleteEmailReport();
@@ -1189,6 +1384,11 @@ public class Main {
         }
     }
 
+    /**
+     * To valid a user name entered by the ser
+     * @param userName the username
+     * @return true if valid, false otherwise
+     */
     private boolean validateUserName(String userName){
         if( userName.length() > 15 || userName.isEmpty() ){
             return false;
@@ -1202,6 +1402,11 @@ public class Main {
         return true;
     }
 
+    /**
+     * validate password entered by user
+     * @param pass the password entered by user
+     * @return true if valid, false otherwise
+     */
     private boolean validatePassword(String pass){
         String password = pass.replaceAll("\\s+$", "");
         if( password.trim().isEmpty() ){
@@ -1216,22 +1421,33 @@ public class Main {
         return true;
     }
 
+    /**
+     * enable user to log out
+     */
+    @SuppressWarnings("unchecked")
     private void logOutUser(){
         if( this.currentSession.isGuestUser() ){
             File guestDir = new File("appdata/usersdata/1");
             if( guestDir.exists() ){
                 String[]entries = guestDir.list();
+                if( entries == null ){
+                    return;
+                }
                 for(String s: entries){
                     File currentFile = new File(guestDir.getPath(),s);
                     currentFile.delete();
                 }
+                //delete activity if is a guest
                 guestDir.delete();
             }
         }
 
         if( !this.currentSession.isGuestUser()){
+            //if is a registered user, log activity
             currentSession.storeUserActivity(false);
         }
+
+        //reset everything
         passwordField.setText("");
         signUpPassField.setText("");
         signUpUserNameField.setText("");
@@ -1255,6 +1471,11 @@ public class Main {
         currentSession = null;
     }
 
+    /**
+     * Request data from etsy
+     * @param searchQuery the search keyword/s
+     */
+    @SuppressWarnings("unchecked")
     private void getData(JTextField searchQuery){
         String searchRaw = searchQuery.getText().trim();
 
@@ -1263,12 +1484,14 @@ public class Main {
             return;
         }
 
+        //get formatted url
         //Set the min/max price and search query
         this.etsyUrlFormatter.setPriceMin(getMinPrice());
         this.etsyUrlFormatter.setPriceMax(getMaxPrice());
         this.etsyUrlFormatter.setSearchQuery(searchRaw);
-
         String search = this.etsyUrlFormatter.getSearchQuery();
+
+        //request data
         ArrayList<Item> results = currentSession.search(search, this.etsyUrlFormatter.getFormatedUrl());
         if( results != null ){
             loadResultsTableRows(results);
@@ -1285,6 +1508,10 @@ public class Main {
         }
     }
 
+    /**
+     * Load the results table with data received from Etsy.com
+     * @param results An ArrayList<Itemn> with all items
+     */
     private void loadResultsTableRows(ArrayList<Item> results){
         if( results != null ) {
             resultsTblModel.setRowCount(0);
@@ -1301,22 +1528,34 @@ public class Main {
         }
     }
 
+    /**
+     * To validate an email address
+     * @param emailAddress an email address
+     * @return true if valid, false otherwise
+     */
     private boolean validateEmailAddress(String emailAddress){
         String validEmail = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         return emailAddress.matches(validEmail);
     }
 
+    /**
+     * Send email report
+     */
     private void sendEmailTo(){
 
         if( emailField != null ) {
+            //get entered email address
             String recipient = emailField.getText();
             String emailAddress = recipient.trim();
+            //validate email address
             boolean isValidEmail = validateEmailAddress(emailAddress);
             if( isValidEmail ){
+                //set up email
                 Email email = new Email();
                 email.setRecipient(emailAddress);
                 email.setHeader("Report from Etsy Crawler" );
                 email.setEmailBody(this.currentSession.getEmailList(), this.currentSession.getUser().getUserName());
+                //send email
                 Boolean emailSent = email.sendEmail();
                 if(emailSent){
                     msgField.setText("Email was sent successfully");
@@ -1329,6 +1568,9 @@ public class Main {
         }
     }
 
+    /**
+     * Allow user to view the email report
+     */
     private void showEmailReport(){
         ArrayList<Item> emailList = currentSession.getEmailList();
         if( emailList != null && emailList.size() > 0 ){
@@ -1340,6 +1582,9 @@ public class Main {
         }
     }
 
+    /**
+     * Allow the user to add a selected item in the results table, to the email report
+     */
     private void addItemToEmailReport(){
         if( this.currentSession.isViewingEmailReport() ){
             msgField.setText("Items cannot be added to from email report to email report");
@@ -1354,6 +1599,9 @@ public class Main {
         }
     }
 
+    /**
+     * Add an entire search to the email report
+     */
     private void addCurrentSearchToEmailReport(){
         if( this.currentSession.isViewingEmailReport() ){
             msgField.setText("Cannot add to email report while viewing email report");
@@ -1368,21 +1616,35 @@ public class Main {
         }
     }
 
+    /**
+     * sort results by price in ascending or descending order
+     * @param sortOrder string specifying ASC or DESC order
+     */
     private void sortByPrice(String sortOrder){
         this.currentSession.sortByPrice(sortOrder);
         loadResultsTableRows(this.currentSession.getSearches().get(this.currentSession.getCurrentSearch()));
     }
 
+    /**
+     * sort results by date in ascending order
+     */
     private void sortByDateASC(){
         this.currentSession.sortByDateASC();
         loadResultsTableRows(this.currentSession.getSearches().get(this.currentSession.getCurrentSearch()));
     }
 
+    /**
+     * sort results by date in descending order
+     */
     private void sortByDateDESC(){
         this.currentSession.sortByDateDESC();
         loadResultsTableRows(this.currentSession.getSearches().get(this.currentSession.getCurrentSearch()));
     }
 
+    /**
+     * Get the minimum price filter
+     * @return string representing the min price
+     */
     private String getMinPrice(){
         String price = this.minPrice.getText().trim();
         if( price.matches("^\\d+([,.]\\d{1,2})?$") ){
@@ -1393,6 +1655,10 @@ public class Main {
             return "";
     }
 
+    /**
+     * Get the max price filter
+     * @return string representing the max price
+     */
     private String getMaxPrice(){
         String price = this.maxPrice.getText().trim();
         if( price.matches("^\\d+([,.]\\d{1,2})?$") ){
@@ -1404,6 +1670,9 @@ public class Main {
         }
     }
 
+    /**
+     * Allow admin to view all deleted searches from all users
+     */
     private void loadAllDeletedSearches(){
         ArrayList<Item> deletedItems = admin.getAllDeletedHistory();
         if( deletedItems != null && !deletedItems.isEmpty() ){
@@ -1421,12 +1690,20 @@ public class Main {
             adminRecoverSelectedItem.setEnabled(true);
             reconstructAll.setEnabled(true);
             adminMsgLabel.setText("Viewing " + deletedItems.size() + " items deleted by all users");
+            adminViewUserData.setEnabled(false);
+            adminViewUserDeletedData.setEnabled(false);
+            reconstructUser.setEnabled(false);
+            allUsersTable.getSelectionModel().clearSelection();
+            usersListTable.getSelectionModel().clearSelection();
         }
         else
             adminMsgLabel.setText("Load data first or there is no deleted data by users");
 
     }
 
+    /**
+     * Enable the ability to reconstruct all deleted data for all users
+     */
     private void reconstructAllUsersData(){
         if( admin.getDeletedData() == null ){
             adminMsgLabel.setText("Load data first or there is no deleted data by users");
@@ -1445,6 +1722,9 @@ public class Main {
         adminRecoverSelectedItem.setEnabled(false);
     }
 
+    /**
+     * Allow the admin to view all data searched by a specific user
+     */
     private void viewSelectedUserSavedData(){
 
             ArrayList<Item> items = admin.getSelectedUserData(selectedUserId);
@@ -1467,6 +1747,9 @@ public class Main {
                 adminMsgLabel.setText("Load data first or this user does not have any data saved");
     }
 
+    /**
+     * Get all data deleted by user id
+     */
     private void getUserDeletedDataById(){
         if( !selectedUserId.isEmpty() ) {
             admin.loadUserDeletedDataById(selectedUserId);
@@ -1490,6 +1773,9 @@ public class Main {
         }
     }
 
+    /**
+     * Allow the admin to restore a selected item from a specific user
+     */
     private void reconstructSelectedUserData(){
         if( !selectedUserId.isEmpty() ){
             admin.recoverSelectedUserDeletedData(selectedUserId);
@@ -1502,6 +1788,9 @@ public class Main {
             adminMsgLabel.setText("Load data first or there is no deleted data by this user");
     }
 
+    /**
+     * Allow the admin to delete specific user accounts
+     */
     private void deleteSelectedUser(){
         if( !selectedUserId.isEmpty() ){
             DBDriver.deleteUserByUserId(selectedUserId);
@@ -1513,15 +1802,6 @@ public class Main {
         else
             adminMsgLabel.setText("could not delete user " );
     }
-
-    //main
-    public static void main(String[] args) {
-        new Main();
-
-    }//main
-
-
-
 
     /**
      * Private action listeners for different components
@@ -1634,21 +1914,23 @@ public class Main {
         @Override
         public void itemStateChanged(ItemEvent e) {
             Object item = e.getItem();
-            if( item.toString().equals("Neither") ){
-                etsyUrlFormatter.setFreeShipping("");
-                etsyUrlFormatter.setSale("");
-            }
-            else if( item.toString().equals("Free Shipping only") ){
-                etsyUrlFormatter.setFreeShipping("&free_shipping=true");
-                etsyUrlFormatter.setSale("");
-            }
-            else if( item.toString().equals("Sale only") ){
-                etsyUrlFormatter.setSale("&is_discounted=true");
-                etsyUrlFormatter.setFreeShipping("");
-            }
-            else if( item.toString().equals("Free Shipping and on Sale") ){
-                etsyUrlFormatter.setFreeShipping("&free_shipping=true");
-                etsyUrlFormatter.setSale("&is_discounted=true");
+            switch (item.toString()) {
+                case "Neither":
+                    etsyUrlFormatter.setFreeShipping("");
+                    etsyUrlFormatter.setSale("");
+                    break;
+                case "Free Shipping only":
+                    etsyUrlFormatter.setFreeShipping("&free_shipping=true");
+                    etsyUrlFormatter.setSale("");
+                    break;
+                case "Sale only":
+                    etsyUrlFormatter.setSale("&is_discounted=true");
+                    etsyUrlFormatter.setFreeShipping("");
+                    break;
+                case "Free Shipping and on Sale":
+                    etsyUrlFormatter.setFreeShipping("&free_shipping=true");
+                    etsyUrlFormatter.setSale("&is_discounted=true");
+                    break;
             }
         }
     }

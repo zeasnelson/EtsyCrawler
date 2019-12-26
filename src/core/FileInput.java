@@ -4,11 +4,20 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * This class implements the buffer reader to provide the most useful features.
+ *  -read lines
+ *  -read any char
+ *  -read only non whitespace chars
+ *
+ *  All exceptions are handled and all methods return a value, true or false null
+ * @author Nelson Zeas
+ */
+
 public class FileInput{
 
     /**
      * Reads characters from a file
-     * @author Nelson Zeas
      */
     private BufferedReader reader;
 
