@@ -7,6 +7,22 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * Allows to create a new user session
+ * This class provides different operations to manage all user activity while logged in
+ *      - Search
+ *      - Advanced search with filters
+ *      - Send email report
+ *      - Sort data by price
+ *      - Sort data by date
+ *      - Delete entire searches
+ *      - Delete specific results
+ *      - Create an email report
+ *      - Delete the email report
+ *      - Account management: changing password
+ *      - View images for specific results
+ *      - View search history
+ */
 public class UserSession {
 
 
@@ -63,6 +79,10 @@ public class UserSession {
     private HashMap<String, String> searchHistory;
 
 
+    /**
+     * Int user's default vales
+     * @param user A User with Id and password
+     */
     public UserSession(User user) {
         this.user = user;
         this.searches = new HashMap<>();
@@ -75,18 +95,31 @@ public class UserSession {
         this.isGuestUser = false;
     }
 
+    /**
+     * @return searchHistory HashMap
+     */
     public HashMap<String, String> getSearchHistory() {
         return searchHistory;
     }
 
+    /**
+     * set isGuestUser to enable/disable specific GUI functions
+     * @param isGuestUser true or false
+     */
     public void setIsGuestUser(Boolean isGuestUser){
         this.isGuestUser = isGuestUser;
     }
 
+    /**
+     * @return true if current user is guest, false otherwise
+     */
     public Boolean isGuestUser(){
         return this.isGuestUser;
     }
 
+    /**
+     * @return HashMap
+     */
     public HashMap<String, ArrayList<Item>> getSearches() {
         return searches;
     }
@@ -95,21 +128,34 @@ public class UserSession {
         this.user = user;
     }
 
+    /**
+     * @return the currently logged in user
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * @return the last searchQuery performed by user
+     */
     public String getCurrentSearch() {
         return currentSearch;
     }
 
+    /**
+     * @return true if the current user is viewing the email report, false otherwise
+     */
     public Boolean isViewingEmailReport() {
         return isViewingEmailReport;
     }
 
+    /**
+     * Read all saved searches from user and store it in an ArrayList
+     * @return an ArrayList that contains all saved history
+     */
     public ArrayList<Item> getAllSearches(){
         ArrayList<Item> allItems = new ArrayList<>();
-        //remove it becuase the users might have searched for something new
+        //remove it becuase users might have searched for something new
         if( searches.containsKey("absolutelyEverythingFromAllTime")){
             searches.remove("absolutelyEverythingFromAllTime");
         }
@@ -126,12 +172,19 @@ public class UserSession {
         return allItems;
     }
 
+    /**
+     * Request data on Etsy.com and store results in an ArrayList
+     * @param searchQuery The search query
+     * @param url a formatted Etsy.com url
+     * @return An ArrayList with all extracted data
+     */
     public ArrayList<Item> search(String searchQuery, String url){
         System.out.println(url);
         currentSearch = searchQuery;
         this.isViewingEmailReport = false;
         ArrayList<Item> results = null;
 
+        //first check if it already is in the history, don't download
         String historyUrl = searchHistory.get(searchQuery);
         if( searchHistory != null &&  historyUrl != null && historyUrl.equals(url) ) {
             //check if it already is stored in the HashMap
@@ -149,10 +202,17 @@ public class UserSession {
             results = searchOnEtsy(searchQuery, url);
         }
 
-
+        //log activity
+        logActivity("search " + currentSearch + " " + results.size() + " items");
         return results;
     }
 
+    /**
+     * Log a specific item
+     * @param operation either DELETE or INSERT
+     * @param item Item to be logged
+     * @param searchQuery the search query for this Item
+     */
     public void logData(String operation, Item item, String searchQuery){
         if( item == null ){
             return;
@@ -162,24 +222,33 @@ public class UserSession {
         logData(operation, tempList, searchQuery);
     }
 
+    /**
+     * Write to log file all item from an ArrayList
+     * @param operation either DELETE or INSERT
+     * @param items Items to be logged
+     * @param searchQuery the search query for these Items
+     */
     public void logData(String operation, ArrayList<Item> items, String searchQuery){
         FileOutput log = new FileOutput(FileOutput.DATA_LOG, true);
         for( Item item : items ){
             log.print(operation + "\",\"");
             log.print(searchQuery + "\",\"");
             log.print(this.user.getUserId() + "\",\"");
-            log.print(this.user.getUserName() + "\",\"");
             log.print(item.getDescription() + "\",\"");
             log.print(item.getCategory() + "\",\"");
             log.print(item.getPrice() + "\",\"");
             log.print(item.getImgScr() + "\",\"");
             log.print(item.getImgId() + "\",\"");
-            log.print(item.getTimeStamp() + "\",\"");
-            log.println();
+            log.print(item.getTimeStamp() + "\n");
         }
         log.close();
     }
 
+    /**
+     * Load items from search history
+     * @param searchQuery the search query, which represents the file name in the local dir
+     * @return all items as an ArrayList
+     */
     public ArrayList<Item> getResultsFromHistory(String searchQuery){
         ArrayList<Item> results = null;
         File localFile = new File(baseDir+searchQuery+".txt");
@@ -212,6 +281,12 @@ public class UserSession {
         return results;
     }
 
+    /**
+     * Request data on Etsy.com
+     * @param searchQuery a search query
+     * @param url a formatted Etsy.com url
+     * @return An ArrayList that contains all items extracted
+     */
     public ArrayList<Item> searchOnEtsy(String searchQuery, String url){
         String localDir = "appdata/cache/results.html";
         //Download the html file
@@ -220,8 +295,8 @@ public class UserSession {
         if( !downloadSuccess ){
             return null;
         }
-        //Parse and extract necessary data
-        HMTLParser parser = new HMTLParser(localDir);
+        //Parse and extract necessary data //localDir
+        HTMLParser parser = new HTMLParser(localDir);
         parser.parse();
         ArrayList<Item> results = parser.getAllItems();
         if( results == null ){
@@ -232,7 +307,12 @@ public class UserSession {
         return results;
     }
 
-    public void storeUserActivity(){
+    /**
+     * Writes both the searches HashMap and searchHistory HashMap
+     * to the currently logged in user' history directory
+     * @param append true if data should be appended, false otherwise
+     */
+    public void storeUserActivity(Boolean append){
 
         //separate file to save only search keys, not results
         FileOutput writer = new FileOutput(baseDir+userSearchKeyDir);
@@ -242,9 +322,8 @@ public class UserSession {
         writer.close();
 
         //write every search to a file
-
         for( String searchQuery: searches.keySet() ){
-            writer = new FileOutput(baseDir + searchQuery+".txt");
+            writer = new FileOutput(baseDir + searchQuery+".txt", append);
             for( Item item : searches.get(searchQuery) ){
                 writer.print(user.getUserId() + "\",\"");
                 writer.print(item.getDescription() + "\",\"");
@@ -259,6 +338,11 @@ public class UserSession {
         }
     }
 
+    /**
+     * Delete a single item from the searches HashMap
+     * @param index The index of the item to be deleted
+     * @return true if it was deleted, false otherwise
+     */
     public boolean deleteSingleResult(int index){
         if( searches.get(currentSearch) != null ){
             if( index > -1 && index < searches.get(currentSearch).size() ){
@@ -268,7 +352,7 @@ public class UserSession {
 
                 //log data
                 logData(FileOutput.DELETE, item, currentSearch);
-
+                logActivity("delete item " + currentSearch + " " + item );
                 //delete local image if it was downloaded
                 File localImg = new File("appdata/images/"+imgId+".jpg");
                 if( localImg.exists() ){
@@ -280,10 +364,16 @@ public class UserSession {
         return false;
     }
 
+    /**
+     * Remove from searches HashMap the current search.
+     * the current searchQuery is the key, and the value is removed
+     * @return
+     */
     public boolean deleteCurrentSearch(){
         if( currentSearch == null ){
             return false;
         }
+        //delete all search history
         if( currentSearch.equals("absolutelyEverythingFromAllTime") ){
             Set<String> keys = searches.keySet();
             searches.keySet().removeAll(keys);
@@ -295,7 +385,7 @@ public class UserSession {
         else if( searchHistory.get(currentSearch) != null ){
             //log data before delete
             logData(FileOutput.DELETE, searches.get(currentSearch), currentSearch);
-
+            logActivity("delete " + currentSearch + " " + searches.get(currentSearch) + " items" );
             //delete from user's profile
             searchHistory.remove(currentSearch);
             searches.remove(currentSearch);
@@ -304,6 +394,9 @@ public class UserSession {
         return false;
     }
 
+    /**
+     * Read all searchQueries from the user's local history
+     */
     public void loadHistory(){
         if( this.isGuestUser ){
             return;
@@ -311,10 +404,11 @@ public class UserSession {
         String userLocalDir = baseDir+userSearchKeyDir;
         File file = new File(userLocalDir);
         if( file.exists() ){
+            logActivity("get historyItems");
             FileInput reader = new FileInput(userLocalDir);
             String search = reader.readLine();
             String [] searchSplit;
-            while (search != null) {
+            while (search != null && !search.isEmpty()) {
                 searchSplit = search.split("\",\"");
                 searchHistory.put(searchSplit[0], searchSplit[1]);
                 search = reader.readLine();
@@ -324,10 +418,23 @@ public class UserSession {
         }
     }
 
+    /**
+     * Delete the emailList ArrayList
+     */
     public void deleteEmailReport(){
+        logActivity("delete emailReport " + emailList.size() + " items");
         this.emailList = new ArrayList<>();
     }
 
+    /**
+     * Downloads the image for the Item at specified index
+     * There is a local file that keeps the last used id for an image.
+     * A unique image id is generated to avoid re-downloading images.
+     * If an image has already been downloaded, the local image is used instead.
+     * The Item class, which represents a single result,  also defines a field for the image id.
+     * @param itemIndex the index of the item
+     * @return The downloaded image id
+     */
     public String downloadItemImg(int itemIndex){
 
         Integer imgId = null;
@@ -338,6 +445,7 @@ public class UserSession {
             imgId = item.getImgId();
         }
         String imgDir;
+        //guest user images are not saved
         if( this.isGuestUser ){
             File guestDir = new File( "appdata/usersdata/1");
             if( !guestDir.exists() ) {
@@ -346,6 +454,7 @@ public class UserSession {
             imgDir = "appdata/usersdata/1/" + imgId +".jpg";
 
         }
+        //save image with unique id
         else {
             imgDir = "appdata/images/" + imgId +".jpg";
         }
@@ -363,13 +472,20 @@ public class UserSession {
             if( downloaded ){
                 incrementImgIdByOne(newImgId);
                 searches.get(currentSearch).get(itemIndex).setImgId(newImgId);
+                logActivity("download img id " + newImgId+".jpg" );
                 return newImgId+".jpg";
             }else {
                 return null;
             }
         }
+
     }
 
+    /**
+     * Reads from the local file in appdata/usersdata/imgIds.txt
+     * the last Id which the new image will be saved as
+     * @return the download image id
+     */
     private Integer getNextImgId(){
         String localDir = "appdata/usersdata/imgIds.txt";
         FileInput reader = new FileInput(localDir);
@@ -382,6 +498,10 @@ public class UserSession {
         }
     }
 
+    /**
+     * Increments the last used image id by 1 and writes to file to be used in the next call
+     * @param currentId
+     */
     private void incrementImgIdByOne(int currentId){
         String localDir = "appdata/usersdata/imgIds.txt";
         FileOutput writer = new FileOutput(localDir, false);
@@ -389,42 +509,70 @@ public class UserSession {
         writer.close();
     }
 
+    /**
+     * @return set the user as viewingEmailReport and return the emailList Array
+     */
     public ArrayList<Item> getEmailList(){
         this.isViewingEmailReport = true;
+        //log activity
+        logActivity("get emailReport " + emailList.size() + " items");
         return this.emailList;
     }
 
+    /**
+     * Add the item at specified index to emailList from searches HashMap
+     * @param index The index of the item to be searched in searches.HashMap
+     * @return true if it was added to email list, false otherwise
+     */
     public boolean addItemToEmailReport(int index){
         if( searches.containsKey(currentSearch)){
             Item item = searches.get(currentSearch).get(index);
             emailList.add(item);
+            //log activity
+            logActivity("insert emailReport " + item);
             return true;
         }
         return false;
     }
 
+    /**
+     * Delete item at specified index
+     * @param index the index to be removed
+     * @return true if it was deleted, false otherwise
+     */
     public boolean deleteItemFromEmailReport(int index){
         if( this.emailList == null ){
             return false;
         }
         else if( index > -1 && index < this.emailList.size() ){
-            this.emailList.remove(index);
+            Item removedItem = this.emailList.remove(index);
+            //log activity
+            logActivity("delete emailReportItem " + removedItem);
             return true;
         }
         else
             return false;
     }
 
+    /**
+     * Add the value from the HashMap with key currentSearch to emailList.
+     * @return true if it was added, false otherwise
+     */
     public Boolean addCurrentSearchToEmailReport(){
         if( searches.containsKey(currentSearch)){
             ArrayList<Item> results = searches.get(currentSearch);
             emailList.addAll(results);
+            logActivity("insert emailReport " + results.size() + " items");
             return true;
         }
         else
             return false;
     }
 
+    /**
+     * sort items by price in either ASC or DESC order
+     * @param sortOrder ASC for ascending or DESC for descending
+     */
     public void sortByPrice(String sortOrder){
         if( searches.containsKey(currentSearch)){
             ArrayList<Item> result = searches.get(currentSearch);
@@ -434,8 +582,13 @@ public class UserSession {
             else if( sortOrder.equals("DESC"))
                 Collections.sort(result, Collections.reverseOrder());
         }
+        //log activity
+        logActivity("sort " + sortOrder);
     }
 
+    /**
+     * Sort item by date in ascending order
+     */
     public void sortByDateASC(){
         ArrayList<Item> results = searches.get(currentSearch);
         if( results == null ){
@@ -453,8 +606,13 @@ public class UserSession {
                 return 0;
             }
         });
+        //log activity
+        logActivity("sort ASC");
     }
 
+    /**
+     * sort items by date in descending order
+     */
     public void sortByDateDESC(){
         ArrayList<Item> results = searches.get(currentSearch);
         if( results == null ){
@@ -472,6 +630,40 @@ public class UserSession {
                 return 0;
             }
         });
+        //log activity
+        logActivity("sort DESC");
+    }
+
+    /**
+     * Stringify the user id an the and all searches performed by the currently logged in user
+     * @return a string representation of the user id and searches HashMap
+     */
+    public String toString(){
+        String object = "";
+        if( searches.isEmpty() ){
+            return "";
+        }
+        for (String key :  searches.keySet() ) {
+            for( Item item : searches.get(key) ){
+                object += user.getUserId() + "  " + key + " " + item.toString() + "\n";
+            }
+        }
+        return object;
+    }
+
+    /**
+     * To log all user activity with in the application
+     *  - deleting
+     *  - sorting
+     *  - searching
+     *  - image downlands
+     * @param data data to be logged
+     */
+    public void logActivity(String data){
+        //log activity
+        FileOutput activityLog = new FileOutput(FileOutput.ACTIVITY_LOG, true);
+        activityLog.println(data);
+        activityLog.close();
     }
 
 }

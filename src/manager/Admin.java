@@ -1,44 +1,76 @@
-package core;
+package manager;
 
-import manager.UserSession;
+import core.*;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class to create an admin session
+ * Enables the admin to perform different operation such as:
+ *      - restoring all deleted data for all users
+ *      - restore specific deleted results for specific users
+ *      - view all searched data from all users
+ *      - display all registered users
+ *      - display all users that have search history
+ *      - delelete user accounts
+ */
+
 public class Admin {
-
-
-
+    /**
+     * constant to store a user's local directory, where all data is saved
+     */
     private final String usersLocalDir;
 
+    /**
+     * to store data deleted by all/specific users
+     */
     ArrayList<Item> deletedData;
+    /**
+     * to store user's saved data
+     */
     ArrayList<Item> userSavedData;
 
-    private ArrayList<User> users;
 
+    /**
+     * Initialize
+     */
     public Admin(){
-        users = new ArrayList<>(10);
         this.usersLocalDir = "appdata/usersdata/";
         this.deletedData = new ArrayList<Item>();
         this.userSavedData = new ArrayList<>();
     }
 
+    /**
+     * get deleted data array list
+     * @return ArrayList that contains deleted data from users
+     */
     public ArrayList<Item> getDeletedData() {
         return deletedData;
     }
 
+    /**
+     * Get all users that have search history
+     * @return
+     */
     public ArrayList<User> getActiveUsers(){
         ArrayList<User> users = DBDriver.getAllUsersById(getUsersIds());
         return users;
     }
 
+    /**
+     * Get all registered users from the db
+     * @return An ArrayList that contains all registered users if any
+     */
     public ArrayList<User> getAllRegisteredUsers() {
         return DBDriver.getAllUsers("Users");
     }
 
+    /**
+     * Read from log file all deleted data from all users
+     * @return
+     */
     public ArrayList<Item> getAllDeletedHistory(){
         saveDeletedHistory();
         deletedData = new ArrayList<>();
@@ -71,6 +103,13 @@ public class Admin {
         return deletedData;
     }
 
+    /**
+     * Ability to add search key to a users search history
+     * The adds recoveredData to a users search history,
+     * when the admin recovers data, it is not merged the user's other data.
+     * Instead it saved under a new search history key "recoveredData"
+     * @param userId a search query
+     */
     private void addSearchKeyToUser(String userId){
 
         String parentDir = "appdata/usersdata";
@@ -98,10 +137,19 @@ public class Admin {
         }
     }
 
+    /**
+     * Helper method.
+     *
+     */
     public void saveDeletedHistory(){
         saveDeletedHistory(this.deletedData);
     }
 
+    /**
+     * When the admin requests all deleted data from users,
+     * this data must be written back to a file if it was not recovered
+     * @param list
+     */
     private void saveDeletedHistory(ArrayList<Item> list){
         if (list != null ){
             FileOutput writer = new FileOutput("appdata/log/datalog.txt", true);
@@ -119,8 +167,16 @@ public class Admin {
             }
             writer.close();
         }
+        logActivity("admin savedDeletedHistory " + list.size() + " items");
     }
 
+    /**
+     * Copy data from ArrayList to HashMap
+     * Key are user ids and value, search results
+     * Facilitates recovering data when all deleted searches are being recovered
+     * @param items An ArrayList with items
+     * @return new HashMap
+     */
     public HashMap<String, ArrayList<Item>> convertToHashMap(ArrayList<Item> items){
         if( items == null ){
             return null;
@@ -140,6 +196,10 @@ public class Admin {
         return byUserId;
     }
 
+    /**
+     * Enable ability to recover all deleted history by all users
+     * Data is saved under "recoveredData" under search history
+     */
     public void restoreAllDeletedHistory(){
         if( deletedData ==  null ){
             return;
@@ -163,9 +223,15 @@ public class Admin {
             writer.close();
             addSearchKeyToUser(key);
         }
+        logActivity("admin restore allDeletedData " + " " + deletedData.size() + " items");
         deletedData = null;
     }
 
+    /**
+     * Allows  the user to restore a specific selected result from the table
+     * @param index The index of the selected item
+     * @return true if item was deleted, false otherwise
+     */
     public boolean restoreSelectedResult(int index){
         if( deletedData == null ) {
             return false;
@@ -188,11 +254,17 @@ public class Admin {
             writer.print(item.getImgScr() + "\n");
             writer.close();
             addSearchKeyToUser(item.getUserId());
+            logActivity("admin restore item " + item);
             return true;
         }
         return false;
     }
 
+    /**
+     * Allow admin to view all stored data by a specific user
+     * @param userId user id
+     * @return An ArrayList with all saved data
+     */
     public ArrayList<Item> getSelectedUserData(String userId){
         //clear the list if it has data already, may be from different user
         userSavedData = new ArrayList<>();
@@ -209,9 +281,16 @@ public class Admin {
                 }
             }
         }
+        logActivity("admin get userSavedData " + userSavedData.size() + " items");
         return userSavedData;
     }
 
+    /**
+     * Read saved user data. Search history is stored under a unique directory, which is named after the user's id
+     * @param fileName file to be read
+     * @param userId The user's id
+     * @return An ArrayList with all data
+     */
     public ArrayList<Item> readFileItems(String fileName, String userId){
         ArrayList<Item> items = new ArrayList<>();
         File userDir = new File("appdata/usersdata/" + userId + "/" + fileName);
@@ -240,10 +319,16 @@ public class Admin {
                 return items;
             }
         }
+        logActivity("admin get userSavedData " + items.size() + " items");
         return items;
     }
 
+    /**
+     * Creates an ArrayList with all deleted item by user id
+     * @param userId the user's id
+     */
     public void loadUserDeletedDataById(String userId){
+        //if the deletedData array is not empty, save that first
         saveDeletedHistory();
         deletedData = new ArrayList<>();
         String regex = "\",\"";
@@ -251,6 +336,7 @@ public class Admin {
         FileOutput writer = new FileOutput(tempDir);
         FileInput reader = new FileInput(FileOutput.DATA_LOG);
 
+        //read data
         if( reader != null ){
             String line = reader.readLine();
             while( line != null ){
@@ -271,8 +357,14 @@ public class Admin {
             File tempDataLog = new File(tempDir);
             tempDataLog.renameTo(newFileName);
         }
+        logActivity("admin get deletedItems " + deletedData.size() + " items");
     }
 
+    /**
+     * Create and fill an item object
+     * @param data An array with item details: searchQuery, userId, desciption, category, price, imgSrc, timeStamp
+     * @return an Item object
+     */
     private Item extractItem(String [] data){
         if( data.length < 9 )
             return null;
@@ -298,6 +390,11 @@ public class Admin {
         return item;
     }
 
+    /**
+     * Restores one item from an ArrayList if it is not empty
+     * Each item in the array list has a user id, and the result being recovered is stored under that user's directory
+     * @param userId the user's id
+     */
     public void recoverSelectedUserDeletedData(String userId){
 
         String parentDir = "appdata/usersdata";
@@ -322,6 +419,12 @@ public class Admin {
         deletedData = null;
     }
 
+    /**
+     * When a user searches from on Etsy.com,
+     * there is a folder automatically generated and named after the user's id
+     * These folder names are scanned as user ids
+     * @return An arrayList with all user ids
+     */
     private ArrayList<String> getUsersIds(){
         File localDir = new File(this.usersLocalDir);
         int size = localDir.listFiles().length;
@@ -339,9 +442,18 @@ public class Admin {
         return ids;
     }
 
-    public static void main(String[] args) {
-        Admin admin = new Admin();
-
+    /**
+     * To log all user activity with in the application
+     *  - restoring data
+     *  - deleting user accounts
+     *  - viewing user data
+     * This logged data is more for humans to read that to be processed by a program
+     * @param data data to be logged
+     */
+    public void logActivity(String data){
+        //log activity
+        FileOutput activityLog = new FileOutput(FileOutput.ACTIVITY_LOG, true);
+        activityLog.println(data);
+        activityLog.close();
     }
-
 }

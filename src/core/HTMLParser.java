@@ -18,7 +18,7 @@ import java.util.*;
  *
  * @author Nelson Zeas
  */
-public class HMTLParser {
+public class HTMLParser {
 
     /**
      * To read the file to be parsed
@@ -55,7 +55,7 @@ public class HMTLParser {
      * Initialize all variables
      * @param inputFileName The name of the file to be parsed
      */
-    public HMTLParser(String inputFileName) {
+    public HTMLParser(String inputFileName) {
         reader = new FileInput(inputFileName);
         root = new TagNode();
         initIgnoredTagsSet();

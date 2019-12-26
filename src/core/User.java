@@ -1,9 +1,21 @@
 package core;
 
 public class User {
-    String userName;
-    String userId;
-    String userPass;
+
+    /**
+     * To store this user's username
+     */
+    private String userName;
+
+    /**
+     * To store this user's id
+     */
+    private String userId;
+
+    /**
+     * To store this user's password
+     */
+    private String userPass;
 
     public User(String userId, String userName, String userPass) {
         this.userName = userName;
@@ -11,28 +23,15 @@ public class User {
         this.userPass = userPass;
     }
 
+
+    //getter
     public String getUserName() {
         return userName;
     }
 
+    //setter
     public String getUserId() {
         return userId;
-    }
-
-    public String getUserPass() {
-        return userPass;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public void setUserPass(String userPass) {
-        this.userPass = userPass;
     }
 
     @Override
@@ -44,6 +43,11 @@ public class User {
                 '}';
     }
 
+    /**
+     * Method to provide the ability to change the user's password
+     * @param newPassword the new password
+     * @return 2 if if the user does not exist in the database, 1 if password was changed, -1 otherwise
+     */
     public int changePassword(String newPassword){
         User exists = DBDriver.userExists(this.userName, newPassword);
         if( exists != null ){
